@@ -1,0 +1,272 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albums</title>
+    <link rel="stylesheet"  href="{%static 'css/album.css'%}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'icon.png'%}">
+</head>
+<body id="body">
+    <div class="header">
+        <div style="display: flex;justify-content: space-between;
+        align-items: center;width: 80%;">
+                <h1 style="cursor: pointer;" onclick="window.location.href = '/'">../</h1>
+                <h1>Albums</h1>
+                {% if perm%}
+                <div id="add" onclick="ADD()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-square-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M3 3m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"></path>
+                        <path d="M9 12l6 0"></path>
+                        <path d="M12 9l0 6"></path>
+                     </svg>
+                </div>
+                {%endif%}
+        </div>
+        
+    </div>
+
+    
+    <div class="albums-container">
+    {%for album in albums%}
+        <div class="album" id="album-{{album.pk}}">
+            <div class="edit-line" id="edit-animation-{{album.pk}}">
+                <img src="{{album.thumbnail.url}}" class="dummy-img" id="dummy-img-{{album.pk}}">
+                <div class="upload-container">
+                    <input type="file" id="file-input-{{album.pk}}" style="width: 80px;height: 80px; cursor: pointer; opacity: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-upload" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                        <path d="M7 9l5 -5l5 5"></path>
+                        <path d="M12 4l0 12"></path>
+                     </svg>
+                </div>
+            </div>
+
+            <a href="{% url 'love-album-view' album.title %}" id="album-link-{{album.pk}}">
+                <div class="delete-line" id="delete-animation-{{album.pk}}">DELETE</div>
+                <img src="{{album.thumbnail.url}}" id="album-image-{{album.pk}}" style="height: 300px;object-fit: cover;width: 100%;">
+            </a>
+                <div class="album-detail">
+                    <p id="album-title-{{album.pk}}" style="justify-self: left; position: relative;left: 50px;cursor: pointer;align-self: center;" onclick="window.location.href ='/album/{{album.title}}'">{{album.title}}</p>
+                    <input type="text" class="edit-input" id="edit-input-{{album.pk}}"  placeholder="{{album.title}}">
+                    {% if perm%}
+                    <div class="more-option" id="more-option-{{album.pk}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M15 6l-6 6l6 6"></path>
+                         </svg>
+                    </div>
+                    {%endif%}
+                    <div class="options" id="album-options-{{album.pk}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="less-options" id="less-option-{{album.pk}}" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M15 6l-6 6l6 6"></path>
+                         </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" id="delete-{{album.pk}}" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M4 7l16 0"></path>
+                            <path d="M10 11l0 6"></path>
+                            <path d="M14 11l0 6"></path>
+                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                         </svg>
+                         <svg xmlns="http://www.w3.org/2000/svg" id="edit-{{album.pk}}" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                            <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                            <path d="M16 5l3 3"></path>
+                         </svg>
+                         <button id="save-{{album.pk}}">APPLY</button>
+                    </div>
+                </div>
+            </div>
+            <script>
+                var saveBTN = document.getElementById('save-{{album.pk}}')
+                var deleteBTN = document.getElementById('delete-{{album.pk}}')
+                var editBTN = document.getElementById('edit-{{album.pk}}')
+                var moreOptionBTN = document.getElementById('more-option-{{album.pk}}')
+                var fileInput = document.getElementById('file-input-{{album.pk}}')
+                var lessOptionBTN = document.getElementById('less-option-{{album.pk}}')
+                deleteBTN.addEventListener('click', function(){
+                    initiateDelete('{{album.pk}}')
+                } )
+
+                fileInput.addEventListener('change', function(){
+                    uploadImg('{{album.pk}}')
+                })
+                
+                editBTN.addEventListener('click', function(){
+                    initiateEdit('{{album.pk}}')
+                } )
+
+                saveBTN.addEventListener('click', function(){
+                    Save('{{album.pk}}')
+                })
+
+                moreOptionBTN.addEventListener('click', function(){
+                    initiateOptions('{{album.pk}}')
+                })
+
+                lessOptionBTN.addEventListener('click', function(){
+                    initiateOptions('{{album.pk}}')
+                })
+            </script>
+    {%endfor%}
+    </div>
+    
+</body>
+</html>
+<script>
+    
+    var nowFunc = 'off';
+    function initiateDelete(pk){
+        const deletePanel = document.getElementById('delete-animation-'+pk)
+        const deleteButton = document.getElementById('delete-'+pk)
+        const btnDisplay = document.getElementById('save-'+pk)
+        if(document.getElementById('edit-animation-'+pk).style.display == 'flex'){
+            const dummy = document.getElementById('dummy-img-'+pk)
+            dummy.style.display = 'none'
+            initiateEdit(pk)
+        }
+        if (deletePanel.style.display == 'flex'){
+            deletePanel.style.display = 'none'
+            deleteButton.style.stroke = '#444'
+            btnDisplay.style.display='none'
+            nowFunc = 'off'
+        }else{
+            deletePanel.style.display = 'flex'
+            deleteButton.style.stroke = '#C71717'
+            btnDisplay.style.display='block'
+            nowFunc = 'Delete'
+        }
+
+    }
+    function initiateEdit(pk){
+        const editPanel1 = document.getElementById('edit-animation-'+pk)
+        const editPanel2 = document.getElementById('edit-input-'+pk)
+        const editButton = document.getElementById('edit-'+pk)
+        const btnDisplay = document.getElementById('save-'+pk)
+        if (document.getElementById('delete-animation-'+pk).style.display == 'flex'){
+            initiateDelete(pk)
+            
+        }
+
+        const dummy = document.getElementById('dummy-img-'+pk)
+            dummy.style.display = 'none'
+        if (editPanel1.style.display == 'flex'){
+            editPanel1.style.display = 'none'
+            dummy.style.display = 'none'
+            editButton.style.stroke ='#444'
+            editPanel2.style.display ='none'
+            btnDisplay.style.display='none'
+            nowFunc = 'off'
+        }else{
+            editPanel1.style.display ='flex'
+            editButton.style.stroke ='green'
+            editPanel2.style.display ='flex'
+            dummy.style.display = 'block'
+            nowFunc = 'Edit'
+            btnDisplay.style.display='block'
+        }
+    }
+
+    function uploadImg(pk){
+        const fileInput = document.getElementById('file-input-'+pk)
+        const fileSelected = fileInput.files[0]
+        const reader = new FileReader()
+        const dummy = document.getElementById('dummy-img-'+pk)
+        dummy.style.display ='block'
+        reader.addEventListener('load',function(){
+            dummy.setAttribute('src', reader.result)
+            dummy.style.display ='block'
+        })
+
+        reader.readAsDataURL(fileSelected)
+    }
+    function initiateOptions(pk){
+        
+        const optionspanel = document.getElementById('album-options-'+ pk)
+        console.log(optionspanel.style.display)
+        if (optionspanel.style.display == 'flex'){
+            optionspanel.style.display = 'none'
+            if (nowFunc != 'off'){
+                if (nowFunc== 'Edit'){
+                    initiateEdit(pk)
+                }else{
+                    initiateDelete(pk)
+                }
+            }
+        }else{
+
+            optionspanel.style.display ='flex'
+        }
+    }
+    function Save(pk){
+        if(nowFunc == 'Delete'){
+            $.ajax({
+                url: '/album/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken':'{{csrf_token}}',
+                    'action':'DEL',
+                    'album-pk':pk
+                },
+                success: function(response) {   
+                    document.getElementById('album-'+pk).remove()
+            }
+
+        });
+        }
+        else if(nowFunc == 'Edit'){
+            var formData = new FormData()
+            const fileInput = document.getElementById('file-input-'+pk)
+            if (fileInput.value != ''){
+                formData.append('image', fileInput.files[0])
+            }
+
+            var title = document.getElementById('edit-input-'+ pk)
+            var firstTitle = document.getElementById('album-title-'+ pk)
+            if (title.value == ''){
+                title.value = firstTitle.innerHTML
+            }
+            formData.append('title', title.value)
+            formData.append('csrfmiddlewaretoken', '{{csrf_token}}')
+            formData.append('action', 'EDIT')
+            formData.append('album-pk', pk)
+            console.log(title)
+
+            $.ajax({
+                    url: '/album/',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {   
+                        const albumImage = document.getElementById('album-image-'+ pk)
+                        const fileInput = document.getElementById('file-input-'+pk)
+                        const reader = new FileReader()
+                        reader.addEventListener('load',function(){
+                            albumImage.setAttribute('src', reader.result)
+                        })
+                        if (fileInput.value != ''){
+                            reader.readAsDataURL(fileInput.files[0])
+                        }
+
+                        firstTitle.innerHTML = title.value
+                        const albumLink = document.getElementById('album-link-'+ pk)
+                        albumLink.setAttribute('href', `/album/${title.value}`)
+                        initiateEdit(pk)
+                    }
+
+            });
+        }
+    }
+
+</script>
+<script src="{%static 'js/album.js'%}"></script>

@@ -1,0 +1,75 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{%static 'css/login.css'%}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'icon.png'%}">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Login</title>
+</head>
+<body>
+    <div class="card">
+        <h1>Register</h1>
+        <div class="inputs">
+            <input type="text" id="username" placeholder="اسم کوچیکت D:">
+            <input type="text" id="password" placeholder="یه پسوردی چیزی">
+        </div>
+        <p id="errC"></p>
+        <button id="submit">Submit 
+            <div id="loader-container">
+                <div class="loader"></div>
+            </div>
+        </button>
+    </div>
+</body>
+</html>
+<script>
+    var username = document.getElementById('username')
+    var  password = document.getElementById('password')
+    var loaderDiv = document.getElementById('loader-container')
+    const errC = document.getElementById('errC')
+    var loader = true
+    $(document).ready(function() {
+  $('#submit').click(function() {
+    
+    if (loader){
+        loader = false
+        loaderDiv.style.display ='flex'
+        console.log(username.value)
+        if(username.value == 'ترانه'){
+            errC.innerHTML = 'چه اسم قشنگی داری'
+            errC.style.color = '#007730'
+            errC.style.display = 'block'
+        }
+        setTimeout(function(){
+            $.ajax({
+                url: '/login/',
+                type: 'POST',
+                data: {
+                    'username': username.value,
+                    'password':password.value,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    loader = true
+                    const ERR = response.ERR
+                    loaderDiv.style.display ='none'
+                    if (ERR == 'None' | ERR =='Logined'){
+                        window.location.href = '/'
+                    }else{
+                        errC.innerHTML = ERR
+                        errC.style.color = '#C71717'
+                        errC.style.display='block'
+                    }
+                },
+        });
+        },4000)
+    
+    }});
+});
+</script>

@@ -1,0 +1,43 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'globals.css'%}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% if title %}
+        <title>{{title}} </title>
+    {%endif%}
+</head>
+
+<body>
+    <div class="header-container" style="z-index: 10;border-bottom: 1px solid rgba(218, 218, 218, 0.726)">
+        <header class="header">
+            <div class="hbox-1">
+                <div class="advs-container">
+                    <a href="">
+                        <img src="/media/assets/icon.png" class="icon">
+                    </a>
+
+                    <a href="" class="site-link"><h1 class="site-link">boardgame.ir</h1></a>
+                </div>
+            </div>
+
+            <div class="hbox-2">
+                <a href="" class="url-link">Board</a>
+                <a href="{%url 'main-games'%}">Games</a>
+                <a href="#">Chatrooms</a>
+                <a href="#">News</a>
+            </div>
+
+            <div class='hbox-3'>
+                <img src="{{user.profile.image.url}}" class="profile-img">
+                <a href="#" class="profile-username">{{user.username}}</a>
+            </div>
+        </header>
+    </div>
+    {%block content%}
+    <!-- Contents -->
+    {%endblock content%}
+</body>
+</html>

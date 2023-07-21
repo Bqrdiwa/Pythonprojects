@@ -1,0 +1,105 @@
+{%extends 'main/base.html'%}
+
+{%block content%}
+<style>
+    .rules-box {
+        display: flex;
+        overflow: hidden;
+        width: 80%;
+        font-family: 'Poppins';
+        font-size: .85rem;
+        margin: auto;
+        border-radius: 10px;
+        gap: 20px;
+        border: 1px solid #dadada;
+        margin-bottom: 40px;
+    }
+
+    p {
+        font-size: 1rem;
+        font-family: 'Poppins';
+    }
+
+    h2 {
+        margin: 20px 0px;
+    }
+
+    button {
+        background-color: #89b4c4;
+        border: 1px solid #548999;
+        color: black;
+        border-radius: 5px;
+        padding: .6em;
+        width: 40%;
+        height: 10%;
+        cursor: pointer;
+        transition: all 200ms ease-in-out;
+    }
+
+    button:hover {
+        background-color: #e6eff6;
+    }
+</style>
+<main>
+    <h2 style="margin:40px;display: block;width: 100%;text-align: center;">-Rules-</h2>
+    <div class="rules-box">
+        <img src="/media/Stogit/story-teller.png" style="height: 300px;">
+        <div style="width:70%;">
+            <h2>The Story Teller</h2>
+            <p style="margin-left: 5px;">One player is the storyteller for the turn. He looks at the 6 images in his hand. From one of these, he makes up a sentence and says it out loud (without showing the card to the other players). The sentence can take different forms: it can be made of one word or more. The sentence can be either invented or be inspired from an existing work of art (poetry or song sample, movie title, proverb, etc)</p>
+        </div>
+    </div>
+
+    <div class="rules-box">
+        <div style="width:100%;">
+            <h2 style="margin:20px">Choosing a card for the storyteller</h2>
+            <p style="margin-left: 25px;">The other players select amongst their 6 images the one that best matches the sentence made up by the storyteller. The selected cards are shuffled with the storyteller card, and are placed randomly face up on the table</p>
+        </div>
+        <img src="/media/Stogit/choosing.png" style="height: 300px;">
+    </div>
+
+    <div class="rules-box">
+        <img src="/media/Stogit/vote.png" style="height: 300px;">
+        <div style="width:70%;">
+            <h2>Finding the storyteller's image: the vote</h2>
+            <p style="margin-left: 5px;">The goal of the other players is to find which image is from the storyteller amongst the displayed ones. Each player secretly votes for the card that he believes belongs to the storyteller (who doesn't vote). To do so, he clicks on the image he voted for. Once everybody has voted, all the voting tokens are revealed as well as the storyteller true card.</p>
+            <p style="margin-left: 5px;">Note: You're not allowed to vote for your own image.</p>
+        </div>
+    </div>
+
+    <div class="rules-box">
+        <div style="width:100%;">
+            <h2 style="margin:20px">Scoring</h2>
+            <p style="margin: 10px 25px;margin-right: 0px;">If all the players have found the storyteller's image, or if none have found it, then the storyteller doesn't score any points and everyone else scores 2 points.</p>
+            <p style="margin: 10px 25px;margin-right: 0px;">In any other case, the storyteller scores 3 points and so do the players who found his image.</p>
+            <p style="margin: 10px 25px;margin-right: 0px;">Each player, except the storyteller, scores one point for each vote that was placed on his or her image.</p>
+        </div>
+        <img src="/media/Stogit/score.png" style="height: 300px;">
+    </div>
+
+    <div class="rules-box">
+        <img src="/media/Stogit/endofturn.png" style="height: 300px;">
+        <div style="width:70%;">
+            <h2>End of turn</h2>
+            <p style="margin-left: 5px;">Each player draws cards into his hand until he has 6. The storyteller for the new turn is the next player in the turn order.</p>
+        </div>
+    </div>
+
+    <div class="rules-box" style="width: 60%;">
+        <div style="width:100%;position: relative;">
+            <h2 style="margin:20px;text-align: center;">GAME END</h2>
+            <p style="margin-left:25px;">The game ends when the last card has been drawn. The player with the most points is the winner.</p>
+            <button style="position: absolute;right: 30px;bottom: 40px;display: flex;flex-direction: row;align-items: center;justify-content: center;font-size: .9rem;font-family: 'Poppins';gap: 10px;"
+                onclick="window.location.href = '/Stogite/Lobbys'">Play now
+                <svg xmlns="http://www.w3.org/2000/svg"  width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M5 12l14 0"></path>
+                <path d="M13 18l6 -6"></path>
+                <path d="M13 6l6 6"></path>
+             </svg>
+            </button>
+        </div>
+        <img src="/media/Stogit/end.png" style="height: 400px;">
+    </div>
+</main>
+{%endblock content%}

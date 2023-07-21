@@ -1,0 +1,71 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{%static 'css/albumADD.css'%}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'icon.png'%}">
+    <title>Add Album</title>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="image">
+                <img src="{%static 'assets/default.png'%}" id="preview-img" style="width: 200px;height: 200px;    object-fit: cover; border-radius: 10px;">
+            </div>
+            <div class="options">
+                <input type="text" id="title" placeholder="اسم البومو چی بزاریم...">
+                <button class="file-input">
+                    یه عکس مربعی انتخاب کن   
+                    <input type="file" id="fileSelect" style="cursor: pointer;">
+                </button>
+                <button class="file-input" id="save-album">
+                    ساخت البوم
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    const fileSelect = document.getElementById('fileSelect')
+    const imgPreview = document.getElementById('preview-img')
+    fileSelect.addEventListener('change', function(){
+        let file = fileSelect.files[0]
+        let reader = new FileReader()
+        reader.addEventListener('load', function(){
+            imgPreview.setAttribute('src', reader.result)
+        })
+        reader.readAsDataURL(file)
+    })
+
+    $(document).ready(function() {
+    $('#save-album').click(function() {
+        var formImageData  = new FormData()
+        if (fileSelect.value != ''){
+            const image = fileSelect.files[0]
+            formImageData.append('image', image)
+        }
+
+        var titleV = document.getElementById('title').value
+        formImageData.append('title', titleV);
+        formImageData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        $.ajax({
+        url: '/albumADD/',
+        type: 'POST',
+        data: formImageData,
+        processData: false,
+        contentType: false,
+        success: function(response) {   
+            window.location.href = '/album/'
+        }
+
+        });
+    });
+    });
+    
+</script>

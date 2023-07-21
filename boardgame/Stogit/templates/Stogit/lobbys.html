@@ -1,0 +1,133 @@
+{% extends 'main/base.html'%}
+
+{%block content%}
+<style>
+    .lobbys-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        width: 100%;
+        height: fit-content;
+        gap: 15px;
+        margin: 50px 0;
+    }
+
+    .lobby-card {
+        display: flex;
+        width: 180px;
+        flex-direction: column;
+        border-radius: 5px;
+        margin: 0 auto;
+        background-color: #f39b58;
+        transition: all 200ms ease-in-out;
+        box-shadow: .4rem .4rem #FD6A02;
+        border-radius: 1rem;
+        border: .5vmin solid #FD6A02;
+
+    }
+
+
+    p {
+        margin: 0;
+        font-size: .85rem;
+    }
+
+    .box-in-lobby {
+        flex-grow: 1;
+        flex-basis: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .lobby-name {
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 200ms ease-in-out;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .text-left {
+        margin: 5px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
+        font-size: .85rem;
+        width: 100%;
+        gap: 5px;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .detail-box {
+        width: 90%;
+    }
+</style>
+
+<main>
+    
+    <div class="lobbys-container">
+        {%for lobby in lobbys%}
+        <div class="lobby-card" id="lobby-card">
+            <div class="lobby-name" id="lobby-name">{{lobby.lobbyName}}</div>
+            
+            <div class="detail-box">
+                <div class="text-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="green" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M3 3m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"></path>
+                     </svg>
+                    <p>Creator: {{lobby.creator.userRelated.username}}</p>
+                </div>
+                <div class="text-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="yellow" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z"></path>
+                     </svg>
+                    <p>Points to win: {{lobby.points}}</p>
+                </div>
+                <div class="text-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="red" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                     </svg>
+                    <p>Players: {{lobby.playersin}}/{{lobby.count}}</p></div>
+                </div>
+                <button id="join-btn" style="cursor: pointer; font-size: .8rem;font-weight: 500; font-family: 'Poppins';
+                margin-top: 5px; align-self: center;padding: 5px; background-color: #f39b58;border: none; border-top-right-radius: 5px;border-top-left-radius: 5px;"
+                onclick="window.location.href = '/Stogite/Lobbys/{{lobby.lobbyName}}'">
+                 
+                Join Lobby
+            </button>
+        </div>
+        {%endfor%}
+    </div>
+</main>
+<script>
+    const btn = document.getElementById('join-btn')
+    const parent = document.getElementById('lobby-card')
+    btn.addEventListener('mouseenter',function(){
+        this.style.backgroundColor = '#f39b58'
+        parent.style.backgroundColor = '#f1caac'
+        parent.style.border = '.5vmin solid #f39b58'
+        parent.style.boxShadow = '.4rem .4rem #f39b58'
+    })
+
+    btn.addEventListener('mouseleave', function(){
+        this.style.backgroundColor = '#f39b58'
+        parent.style.backgroundColor = '#f39b58'
+        parent.style.border = '.5vmin solid #FD6A02'
+        parent.style.boxShadow = '.4rem .4rem #FD6A02'
+    })
+
+</script>
+
+{%endblock content%}

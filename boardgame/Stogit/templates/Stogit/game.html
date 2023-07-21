@@ -1,0 +1,1226 @@
+{%extends 'main/base.html'%}
+
+{%block content%}
+<style>
+        @font-face {
+    font-family: 'Poppins';
+    src: url('/media/fonts/Poppins-Regular.ttf') format('truetype');
+  }
+    .container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+    }
+    body{
+        overflow: hidden;
+    } 
+
+    .header-container{
+        display: none;
+    }
+    .game-canvas {
+        height: fit-content;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 15px;
+        padding: 20px;
+        max-width: 100%;
+        margin: auto;
+
+    }
+
+    .score-board {
+        width: 80%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin: auto;
+        gap: 15px;
+    }
+    
+    .scoreboard-item {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 30px;
+        background-color: #435470;
+        overflow: hidden;
+
+    }
+
+    .scoreboard-bar {
+        height: 100%;
+        position: relative;
+    }
+
+    .scoreboard-percent {
+        background-color: #435470;
+        display: flex;
+        border-radius: 5px;
+        align-items: center;
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        min-width: 25px;
+        height: 20px;
+        padding: 5px;
+        font-family: 'Poppins';
+        justify-content: center;
+    }
+
+    .scoreboard-box {
+        display: flex;
+        flex-direction: row;
+        gap: 2px;
+    }
+
+    .scoreboard-username {
+        background-color: #435470;
+        display: flex;
+        border-radius: 5px;
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+        height: 20px;
+        padding: 5px;
+        font-family: 'Poppins';
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .scoreboard-bar-profile {
+        position: absolute;
+        right: -15px;
+        align-self: center;
+    }
+
+    .scoreboard-bar-profile > svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .card-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 5px;
+        transition: all ease 200ms;
+    }
+
+    .zoom {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 5px;
+        cursor: pointer;
+        display: none;
+        z-index: 101;
+    }
+
+    .zoom:hover{
+        opacity: .5;
+        scale: 1.1;
+    }
+
+    .SI {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 100;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: saturate(50%) blur(1px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .showedImg{
+        height: 80%;
+        border-radius: 10px;
+    }
+
+    .select {
+        height: 12%;
+        width: 200%;
+        left: 50%;
+        transform: translate(-50%,0%);
+        border-radius: 60%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #c3efff;
+        position: absolute;
+        margin: auto;
+        bottom: 10%;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border: 1px solid #171E31;
+        cursor: pointer;
+        transition: all ease 200ms;
+        display: none;
+    }
+
+    .select:hover{
+        background-color: #a5d6ff;
+    }
+    
+    .options-container {
+        max-width: 100%;
+        margin: auto;
+        height: fit-content;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 50px;
+        gap: 30px;
+    }
+
+    .st-options {
+        max-width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 3px;
+
+    }
+
+    .st-input { 
+        background-color: #465572;
+        padding: 5px;
+        font-family: 'Poppins';
+        font-size: .9rem;
+        outline: none;
+        border: 1px solid #171E31;
+        border-radius: 5px;
+        margin: 0;
+        text-align: center;
+        width: fit-content;
+        margin: 0;
+        width: 50%;
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+    }
+    
+    .player-options {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 3px;
+    }
+
+    button {
+        background-color: #465572;
+        border: 1px solid #171E31;
+        font-size: .9rem;
+        outline: none;
+        padding: 5px 10px;
+        font-family: 'Poppins';
+        border-radius: 5px;
+        cursor: pointer;
+        height: 100%;
+        color: #EF7215;
+
+    }
+
+    button:hover {
+        background-color: #454D61;
+        border: 1px solid #171E31;
+    }
+
+    .error {
+        color:red;
+        border: 1px solid black;
+        background-color: #171e31c0;
+        border-radius: 5px;
+        padding: 5px 20px;
+        margin: 10px auto;
+        font-family: 'Fira code';
+        display: none;
+    }
+
+    .notif {
+        color:#EF7215;
+        border: 1px solid black;
+        background-color: #171e31c0;
+        border-radius: 5px;
+        padding: 5px 20px;
+        margin: 10px auto;
+        font-family: 'Fira code';
+        display: none;
+    }
+
+    .seeWho {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin: 13px;
+        width: 100%;
+        
+    }
+
+    .seeWho > svg {
+        width: 40%;
+        height: auto;
+    }
+
+    .information-who{
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(17, 17, 17, 0.5);
+        backdrop-filter: blur(1px);
+        top: 0;
+        left: 0;
+    }   
+
+    .information-who-voted {
+        display: block;
+        z-index: 100;
+        max-width: 100%;
+        padding: 0 8px;
+        margin-top: 5px;
+        align-self: flex-start;
+    }
+
+    .information-text {
+        font-family: 'Poppins';
+        font-weight: bold;
+        font-size: .8rem;
+    }
+
+    .status {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        display: flex;
+        left: 0;
+        backdrop-filter: blur(1px);
+        z-index: 100;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: .9;
+        cursor: pointer;
+        display: none;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .result {
+        width: 70%;
+        margin: auto;
+        background-color: #191919;
+        border: 1px solid #111;
+        color: #FD6A02;
+        font-family: 'Poppins';
+        font-size: .9rem;
+        padding: 15px;
+        display: none;
+        gap: 15px;
+        margin-top: 50px;
+    }
+
+    .result-scores {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin-top: 30px;
+        
+    }
+
+    .result-score{
+        position: relative;
+        display: flex;
+        font-family: 'Poppins';
+        font-weight: bold;
+        font-size: .85rem;
+        align-items: center;
+        justify-content: center;
+        padding: 5px -5px;
+        padding-bottom: 3px;
+        border-bottom: 1px solid #EF7215;
+    }
+
+    .timer {
+        bottom: 0;
+        left: 0;
+        font-family: 'Poppins';
+        color: #3ae57f;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    .force-start{
+        background-color: #191919;
+        border: 1px solid #111;
+        border-radius: 5px;
+        font-size: .9rem;
+        outline: none;
+        padding: 10px;
+        font-family: 'Poppins';
+        cursor: pointer;
+        color: #3ae57f;
+        height: fit-content;
+    }
+
+    .force-start:hover{
+        background-color: #202020;
+        border: 1px solid #191919;
+    }
+
+    .left-bar {
+        position: relative;
+        display:flex;
+        flex-direction:column;
+    }
+
+    .reconnect-msg {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        width:100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        background-color: #191919d2;
+        backdrop-filter: blur(2px);
+        font-size: 1.5rem;
+        font-weight: bold;
+        font-family: 'Poppins';
+        color: white;
+    }
+
+    .side-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        border-right: 1px solid #111;
+        background-color: #171E31;
+        height: 100%;
+        width: 64px;
+    }
+
+    .winner-container{
+        width: 500px;
+        height: 300px;
+        border-radius: 5px;
+        border: 1px solid black;
+        background-color: #EF7215;
+        position: relative;
+    }
+    .winner-profile{
+        width: fit-content;
+        margin: auto;
+        
+    }
+    .winner-profile > svg{
+        width: 100px;
+        height: auto;
+    }
+
+    .winner-detail {
+        width: fit-content;
+        margin: 20px auto;
+        font-weight: bold;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        font-size: .9rem;
+        gap: 10px;
+        font-family: 'Poppins';
+        background-color: #EF7215;
+    }
+
+    .winner-detail-item{
+        white-space: nowrap;
+        width: fit-content;
+    }
+
+    .winner-detail-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 20px;
+        background-color: #111;
+        height: fit-content;
+    }
+
+    .winner-detail-btn:hover {
+        background-color: #191919;
+    }
+</style>
+<script>
+        function AddPoints(username,targetpoint,instant = false){
+        const cardtoadd = document.getElementById('scoreboard-bar-'+username)
+        const pointN = document.getElementById('scoreboard-percent-'+username)
+        const computedStyle = window.getComputedStyle(cardtoadd)
+        const maxWidthDiv = document.getElementById('width-item')
+        const maxWidth = parseFloat(window.getComputedStyle(maxWidthDiv).width)
+        var divwidth = parseFloat(computedStyle.width)
+        const pointsToWin = parseInt('{{game.points}}')
+        const targerPoint = parseInt(targetpoint) + parseInt(pointN.innerHTML)
+        const percent = targerPoint / pointsToWin * 100
+        let currentPercent = divwidth / maxWidth*100
+
+        if (instant==true){
+            cardtoadd.style.width = (parseInt(targetpoint) / pointsToWin * 100)+'%'
+        }else{
+        const adder = setInterval(function(){
+            if (currentPercent < percent){
+                currentPercent += .5
+                cardtoadd.style.width = currentPercent+'%'
+                if (parseInt(pointN.innerHTML) < targerPoint){
+                    pointN.innerHTML = parseInt(pointN.innerHTML) +1
+                }
+
+            }
+            else{
+                clearInterval(adder)
+            }
+        },60)}
+    }
+</script>
+<div style="width:100%;height: 100%;position: fixed;top: 0;left: 0;z-index: 1;">
+    <div style="height:100%"><img src="https://wallpapercave.com/wp/wp9298674.jpg" style="width: 100%;height: 100%;"></div>
+  </div>
+<div class="reconnect-msg" id="reconnect">
+    
+</div>
+<div class="SI" id="SI">
+    <div class="winner-container">
+        <h2 style="width:fit-content;margin: 20px 40px;">Winner -</h2>
+        <div id="winner-profile" class="winner-profile"><svg fill="none" height="80" role="img" viewBox="0 0 36 36" width="80" xmlns="http://www.w3.org/2000/svg"><mask height="36" id="mask__beam" maskUnits="userSpaceOnUse" width="36" x="0" y="0"><rect fill="#FFFFFF" height="36" rx="72" width="36"></rect></mask><g mask="url(#mask__beam)"><rect fill="#74ff74" height="36" width="36"></rect><rect fill="#00e300" height="36" rx="6" transform="translate(9 9) rotate(299 18 18) scale(1.2)" width="36" x="0" y="0"></rect><g transform="translate(4.5 4.5) rotate(-9 18 18)"><path d="M1321 a10.75 0 00 100" fill="#000000"></path><rect fill="#000000" height="2" rx="1" stroke="none" width="1.5" x="10" y="14"></rect><rect fill="#000000" height="2" rx="1" stroke="none" width="1.5" x="24" y="14"></rect></g></g></svg></div>
+        <div class="winner-detail">
+            <div class="winner-detail-item">
+                Username: ${DATA['username']}
+            </div>
+            <div class="winner-detail-item">
+                Rank role points: ${DATA['RR']}
+            </div>
+            <div class="winner-detail-item">
+                Total points: ${DATA['TP']}
+            </div>
+            <div class="winner-detail-item">
+                Total wins: ${DATA['W']}
+            </div>
+            <div class="winner-detail-item">
+                Most streak: ${DATA['MS']}
+            </div>
+        </div>
+        
+    </div>
+</div>
+<div class="side-bar">
+
+</div>
+<main style="position: relative;z-index: 2;">
+    <div class="container" id="container">
+        <div class="game-canvas" id="cards-container">
+        </div>
+        <div class="result" id="result">
+            
+        </div>
+        <div id="error" class="error">
+        </div>
+        <div id="notif" class="notif"></div>
+        <div class="options-container" id="options">
+
+        </div>
+        <div class="score-board">
+            {%for player in game.players%}
+            <div class="scoreboard-box">
+                <div class="scoreboard-username">
+                    {{player.userRelated.username}}
+                </div>
+                <div class="scoreboard-item" id="width-item" onmouseenter="showStatus(mode='show',username='{{player.userRelated.username}}')" onmouseleave="showStatus(mode='vanish',username='{{player.userRelated.username}}')">
+                    <div class="status" id="status-{{player.userRelated.username}}">
+                    </div>
+                    <div class="result" id="result">
+
+                    </div>
+                    <div class="scoreboard-bar" id="scoreboard-bar-{{player.userRelated.username}}">
+                        <div class="scoreboard-bar-profile" id="profile-{{player.userRelated.username}}">
+                            {{player.profile|safe}}
+                        </div>
+                    </div>
+                </div>
+                <div class="scoreboard-percent" id="scoreboard-percent-{{player.userRelated.username}}">
+                    {{player.status.point}}
+                </div>
+            </div>
+            <script>
+                var bar = document.getElementById('scoreboard-bar-'+'{{player.userRelated.username}}')
+                bar.style.backgroundColor = '{{player.color}}'
+                AddPoints('{{player.userRelated.username}}','{{player.status.point}}',instant=true)
+            </script>
+            {%endfor%}
+        </div>
+    </div>
+
+</main>
+
+
+<script>
+    const lobbyN = ('{{game.lobbyName}}')
+    const socket = new WebSocket(`ws:/${window.location.host}/ws/Game/${lobbyN}/`)
+    const checkNotif = document.getElementById('notif')
+    const SI = document.getElementById('SI')
+    const zoom = document.getElementById('zoom')
+    const options = document.getElementById('options')
+    const cardC = document.getElementById("cards-container")
+    const result =  document.getElementById('result')
+    const reconnect  = document.getElementById('reconnect')
+
+    var cards = '{{cards}}'
+    var userUsername = '{{user.username}}'
+    var role = '{{ply.role}}'
+    var story = null
+    let selectPerm = false
+    let selected = false
+    let picked = false
+    let voted = false
+    var ping = 0;
+
+
+    socket.onopen = function(e){
+        socket.send(JSON.stringify({
+        'command':'connect',
+        'username':userUsername
+        }));
+    }
+    socket.onmessage = function(e){
+        const DATA = JSON.parse(e.data)
+        const command = DATA['command']
+        if (command == 'pong'){
+            ping = Date.now() - parseInt(DATA['latency']);
+        }
+        else if (command == 'st-narrate'){
+            console.log(userUsername +' is '+role)
+            if (role =='ST'){
+                clearOptions()
+                viewALL_CARDS('THINK',cardtoshow='')
+                NOTIFMSG('Waiting for players to pick their card',close=false)
+                viewStoryTeller_Waiting(DATA['card'],userUsername)
+            }
+            else{
+                story = DATA['story']
+                viewPlayers_OPTIONS(story,mode='pick')
+            }
+        }
+        else if (command == 'pl-pick'){
+            if (role =='ST'){
+                viewStoryTeller_Waiting(DATA['card'],DATA['username'])
+            }
+            else{
+                if (picked != false){
+                    viewALL_CARDS('THINK')
+                    NOTIFMSG(DATA['rounds']+'/'+'{{game.playersin}}',close=false)
+                }
+            }}
+        else if(command =='pong-status'){
+            const statusD = document.getElementById('status-'+DATA['username'])
+            statusD.innerHTML = DATA['status']
+        }
+        else if (command =='initiate-vote'){
+            if(role=='ST'){
+                NOTIFMSG('Waiting for players to vote cards',close=false)
+            }else{
+                viewPlayers_OPTIONS(story,DATA['cards'])
+
+            }
+        } 
+        else if(command == 'reconnect-data'){
+            console.log(1223)
+            const phase = DATA['phase']
+            if (phase == 'pickCards'){
+                viewPlayers_OPTIONS(DATA['story'],'pick')
+            }
+            else if (phase == 'voteCards'){
+                if (role == 'ST'){
+                    const cards = DATA['cards'].split(',')
+                    const usernames = DATA['usernames'].split(',')
+                    for (let i=0;i<cards.length;i++){
+                        viewStoryTeller_Waiting(cards[i],usernames[i])
+                    }
+                }else{
+                    console.log(DATA['story'])
+                    viewPlayers_OPTIONS(DATA['story'],DATA['cards'])
+                }
+                
+            }
+            else if (phase == 'baseView'){
+                startView(DATA['status'])
+            }
+        }
+        else if (command == 'pl-vote'){
+            if(role=='ST'){
+                if (checkNotif.innerHTML != '')
+                    {NOTIFMSG()
+                    }
+                NOTIFMSG('Waiting for players to vote cards '+DATA['rounds'],close=false)
+                const Notif = document.getElementById(`card-container-${DATA['card']}`).children[3].children[1]
+                if (DATA['correct']== 'True'){
+                    Notif.innerHTML += `<p class="information-text" style="color:#EF7215;">${DATA['username']}</p>`
+                }else{
+                    Notif.innerHTML += `<p class="information-text" style="color:red;">${DATA['username']}</p>`
+                }
+                
+            }else{
+                if (voted == true){
+                    NOTIFMSG()
+                    NOTIFMSG(DATA['rounds'],close=false)
+                    if (DATA['username'] == userUsername){
+                        clearOptions()
+                    }
+                }
+
+
+            }
+        }
+        else if (command =='error'){
+            ERRORMSG(DATA['msg'])
+        }
+        else if(command =='result'){
+            if (DATA['win'] == 'T'){
+                const resultDATA = DATA['RD']
+                let keys = Object.keys(resultDATA)
+                const sortedArr = Object.entries(resultDATA).sort((a,b) => b[1] - a[1]);
+                const sortedObj = Object.fromEntries(sortedArr);
+
+                Board(sortedObj,DATA['TC'],winnerDATA = DATA['WD'])
+                for (let i=0;i<keys.length;i++){
+                    AddPoints(keys[i],resultDATA[keys[i]])
+            }
+            }else{
+                const resultDATA = DATA['RD']
+                let keys = Object.keys(resultDATA)
+                const sortedArr = Object.entries(resultDATA).sort((a,b) => b[1] - a[1]);
+                const sortedObj = Object.fromEntries(sortedArr);
+
+                Board(sortedObj,DATA['TC'])
+                for (let i=0;i<keys.length;i++){
+                    AddPoints(keys[i],resultDATA[keys[i]])
+            }}
+        }
+        else if (command == 'change'){
+            role = DATA['role']
+            cards = DATA['cards']
+            if (role == 'ST'){
+                viewStoryTeller_OPTIONS()
+            }else{
+                viewPlayers_Waiting()
+            }
+        }
+    }
+    function viewStoryTeller_Waiting(CARD, username){
+        cardC.style.display = 'grid'
+        cardC.style.gridTemplateColumns = '4'
+        const profile = document.getElementById('profile-'+username).innerHTML
+        cardC.innerHTML += `<div class="card-container" id="card-container-${CARD}" onmouseenter="animateCard('Join','${CARD}')" onmouseleave="animateCard('Leave','${CARD}')">
+                <img src="/media/Stogit/cards_pics/img_${CARD}.png" style="width: 100%;height: 100%;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="zoom" id="zoom" onclick="showImg('${CARD}')" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M16 4l4 0l0 4"></path>
+                    <path d="M14 10l6 -6"></path>
+                    <path d="M8 20l-4 0l0 -4"></path>
+                    <path d="M4 20l6 -6"></path>
+                </svg>
+                <div class="select" onclick="selectCard('${CARD}')" id="select-${CARD}">
+                    Select
+                </div>
+                <div class="information-who">
+                    <div class="seeWho">${username}'s card</div>
+                    <div class="information-who-voted" id="information-${username}"></div>
+                    </div>
+                
+            </div>`
+
+    }
+    function viewStoryTeller_OPTIONS(){
+        viewALL_CARDS('PICK')
+        options.innerHTML = 
+        `<div class="st-options">
+            <input class="st-input" type="text" id="story">
+            <button style="border-bottom-left-radius: 0;
+            border-top-left-radius: 0;" onclick="submitStoryTeller_TellingStory()">Narrate</button>
+        </div>`
+    }
+    function viewPlayers_Waiting(){
+        viewALL_CARDS('THINK')
+        NOTIFMSG('Waiting for Story teller to narrate')
+    }
+    function viewPlayers_OPTIONS(story,mode){
+        
+        if (mode =='pick'){
+        viewALL_CARDS('PICK')
+        NOTIFMSG('Story: '+story,close=false)
+        options.innerHTML = 
+        `<div class="player-options">
+                <button style="width:20%;height: 50px;" onclick="playerPICK()">Pick</button>
+            </div>`
+        
+        }else{
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            let cardt = ''
+            for (let i =0;i<array.length;i++){
+                cardt+=array[i]+','
+            }
+            return cardt.substring(0,cardt.length-1)
+            }
+        let arr = shuffleArray(mode.split(','))
+        console.log(arr)
+        viewALL_CARDS('PICK',cardtoshow= arr)
+        NOTIFMSG('Vote phase, Story: '+ story,close=false)
+        options.innerHTML = `
+        <div class="player-options">
+                <button style="width:20%;height: 50px;" onclick="playerVOTE()">Vote</button>
+            </div>`
+    }}
+    function viewALL_CARDS(mode,cardtoshow = 'none'){
+        selected = false
+        voted = false
+        picked =false
+        reconnect.style.display = 'none'
+        result.style.display = 'none'
+        if (checkNotif.innerHTML != '')
+        {NOTIFMSG()
+        }
+        cardC.style.display ='grid'
+        if (mode =='PICK'){
+            selectPerm = true
+
+            
+        }
+        else if (mode == 'THINK'){
+            selectPerm = false
+        }
+        
+        if (cardtoshow == 'none'){
+        var CARDS = cards.split(',')
+        }else{
+        var CARDS = cardtoshow.split(',')
+        if (cardtoshow == ''){
+            CARDS= []
+        }
+        }
+        cardC.innerHTML = ''
+        cardC.style.gridTemplateColumns = toString(CARDS.length)
+        for (let i=0;i<CARDS.length;i++)
+        {
+            const CARD = CARDS[i]
+            cardC.innerHTML +=
+            `<div class="card-container" id="card-container-${CARD}" onmouseenter="animateCard('Join','${CARD}')" onmouseleave="animateCard('Leave','${CARD}')">
+                <img src="/media/Stogit/cards_pics/img_${CARD}.png" style="width: 100%;height: 100%;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="zoom" id="zoom" onclick="showImg('${CARD}')" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M16 4l4 0l0 4"></path>
+                    <path d="M14 10l6 -6"></path>
+                    <path d="M8 20l-4 0l0 -4"></path>
+                    <path d="M4 20l6 -6"></path>
+                </svg>
+                <div class="select" onclick="selectCard('${CARD}')" id="select-${CARD}">
+                    Select
+                </div>
+            </div>`
+        }
+    }
+    function clearOptions(){
+        options.innerHTML = ''
+    }
+    function submitStoryTeller_TellingStory(){
+        
+        const story = document.getElementById('story').value
+        
+        if (selected != false && story != ''){
+            socket.send(JSON.stringify({
+            'command':'narrate',
+            'card':selected,
+            'story':story
+        }))
+        }else{
+            if (story == ''){
+                ERRORMSG('I\'m telling you.. this is not a good story try another one!')
+            }else{
+                ERRORMSG('You have to select a card')
+            }
+            
+        }
+    }
+    function NOTIFMSG(msg,close=false){
+        const notifDiv = document.getElementById('notif')
+        if (notifDiv.style.display != 'block'){
+        notifDiv.innerHTML = msg
+        notifDiv.style.display = 'block'
+        notifDiv.style.opacity = 1
+        if (close==true){
+        setTimeout(function(){
+            var startop = 1
+            const ERRincvertal = setInterval(function(){
+                notifDiv.style.opacity = startop -= .05
+                if (startop < 0){
+                    clearInterval(ERRincvertal)
+                    notifDiv.style.display = 'none'
+                }
+            },90)
+        },1000)}
+        
+    }else{
+        notifDiv.style.display ='none'
+    }   
+
+    }
+    function ERRORMSG(msg){
+        const errorDiv = document.getElementById('error')
+        if (errorDiv.style.display != 'block'){
+        errorDiv.innerHTML = msg
+        errorDiv.style.display = 'block'
+        errorDiv.style.opacity = 1
+        setTimeout(function(){
+            var startop = 1
+            const ERRincvertal = setInterval(function(){
+                errorDiv.style.opacity = startop -= .05
+                if (startop < 0){
+                    clearInterval(ERRincvertal)
+                    errorDiv.style.display = 'none'
+                }
+            },90)
+        },1000)
+        
+    }   }
+    function Board(data,truecard,winnerDATA = false){
+        cardC.style.display = 'none'
+        if (checkNotif.innerHTML != '')
+        {NOTIFMSG()
+        }
+        
+        clearOptions()
+        var notifmessage = 'Results :D'
+        let keys = Object.keys(data)
+        var start_ARR = ['Time\'s up!',
+                    'Round over!',
+                    'And that\'s all for this round!',
+                    'That concludes the current round!',
+                    'Let\'s see who scored the most points this round!',
+                    'And that brings us to the end of the round!',
+                    'Round complete!',
+                    'Stop playing cards, please!',
+                    'That\'s it for this round, folks!',
+                    'This round is over, but the game isn\'t. Let\'s add up the points and move on.',
+                    'The game continues in the next round, but for now, let\'s add up those points.'
+                ]
+        var mvp_ARR = [
+            'Champion',
+            'Mvp',
+            'Top scorer',
+            'Star player',
+            'Elite',
+            'Ace',
+            'Prodigy',
+            'All-Star',
+            'Golden player',
+            'Record-breaker',
+            'Game-changer'
+        ]
+        var noob_ARR = [
+            'Newbie',
+            'Rookie',
+            'Novice',
+            'Greenhorn',
+            'Beginner',
+            'Learner',
+            'Amateur',
+            'Neophyte',
+            'Fledgling',
+            'Freshman',
+    ]
+        var xD_ARR =
+        [
+            'LOL',
+            'ROFL',
+            'LMAO',
+            'HAHA',
+            'Teehee',
+            'Hehe',
+            'Snicker',
+            'Chuckle',
+            'Giggles',
+
+        ]
+        var talk_ARR = [
+            'I\'m rambling on',
+            'I\'m being long-winded',
+            'I\'m babbling',
+            'I\'m running my mouth',
+            'I\'m being verbose',
+            'I\'m getting carried away',
+            'I\'m prattling on',
+            'I\'m oversharing',
+        ]
+        var stating_phase = start_ARR[Math.floor(Math.random() * start_ARR.length)]
+        var mvp_phase = mvp_ARR[Math.floor(Math.random() * mvp_ARR.length)]
+        var noob_phase = noob_ARR[Math.floor(Math.random() * noob_ARR.length)]
+        var xd_phase = xD_ARR[Math.floor(Math.random() * xD_ARR.length)]
+        var talk_phase = talk_ARR[Math.floor(Math.random() * talk_ARR.length)]
+        var nextRound = true
+        var NRINFO = 'Next round in '
+        if(winnerDATA){
+            nextRound = false
+            NRINFO = 'GAME ENDED'
+            notifmessage = 'Loading  Game results '
+            setTimeout(function(){
+                showWinner(winnerDATA)
+            },5000)
+        }
+        NOTIFMSG(notifmessage)
+        result.style.display = 'flex'
+        let resultHTML = `<div class="left-bar">Ok, ${stating_phase} Our ${mvp_phase} in this rounds is ${keys[0]} with the highest score of ${data[keys[0]]}. Let\'s move on...
+        No no no! wait...Look at this ${noob_phase} with ${data[keys[keys.length-1]]} score,guess who is that. ${xd_phase}
+        ${talk_phase} sorry. this is the score board => <div class="timer">${NRINFO}<span id="timer-result"></span></div>`
+        if (nextRound){
+        if (role =='ST' && nextRound){
+            resultHTML += '<button class="force-start" id="result-end" style="position:absolute;bottom:0;right:0;margin:15px;">Start now =></button></div>'
+        }
+        else{
+            resultHTML += `<button class="force-start" onclick="showImg(${truecard})" style="position:absolute;bottom:0;right:0;margin:15px;">Show story teller\'s card</button></div>`
+        }
+        }
+        else{
+            resultHTML += `<button class="force-start" onclick="showWinner(${winnerDATA})" style="position:absolute;bottom:0;right:0;margin:15px;">View results</button></div>`
+        }
+        let scoreBoard = `<div class="result-scores">
+            <div class="result-score">
+                player
+                <div class='fancy-border' style="border-bottom:1px solid #FD6A02;border-right:1px solid #FD6A02;"></div>
+                </div>
+            <div class="result-score">
+                points
+                <div class='fancy-border' style="border-bottom:1px solid #FD6A02;"></div>
+                </div>`
+        for (let i=0;i<keys.length;i++){
+                scoreBoard += `
+                    <div class="result-score">
+                        ${keys[i]}
+                        <div class='fancy-border' style="border-bottom:1px solid #FD6A02;"></div>
+                        </div>
+                    <div class="result-score">
+                        ${data[keys[i]]}
+                        <div class='fancy-border' style="border-bottom:1px solid #FD6A02;"></div>
+                        </div>
+             `
+        
+
+        }
+        scoreBoard += '</div>'
+        resultHTML += scoreBoard
+        result.innerHTML= resultHTML
+        let perm = false
+        if (role=='ST'){
+            perm = true
+        }
+        if (nextRound){
+        const timerDiv = document.getElementById('timer-result')
+        let count = 40
+        var timer = setInterval(function(){
+            if (count < 0){
+                clearInterval(timer)
+            }
+            else{
+            timerDiv.innerHTML = count + 's'
+            if(count == 0 && perm==true){
+                clearInterval(timer)
+                socket.send(JSON.stringify({
+                    'command':'initiate-nextround'
+                }))
+            }
+            count -- 
+        }
+            
+        },1000)
+        if (role == 'ST'){
+        document.getElementById("result-end").addEventListener('click',function(){
+            clearInterval(timer)
+            socket.send(JSON.stringify({
+                    'command':'initiate-nextround'
+                }))
+        })
+    }
+    }
+
+    }
+    function showImg(id){
+        SI.innerHTML = `<img class="showedImg" id="img-${id}" src="/media/Stogit/cards_pics/img_${id}.png">`
+        const imgCreated = document.getElementById(`img-${id}`)
+        SI.style.display = 'flex'
+        SI.addEventListener('click', function(){
+            SI.style.display = 'none'
+        })
+    }
+    function animateCard(mode,id){
+        const cardtoanimate = document.getElementById('card-container-'+id)
+        if(mode == 'Join'){
+            cardtoanimate.children[1].style.display = 'block'
+            if (selected != id  && selectPerm == true){
+                document.getElementById(`select-${id}`).innerHTML = 'Select'
+                cardtoanimate.children[2].style.display = 'flex'
+            }
+            
+        }
+        else {
+            cardtoanimate.children[1].style.display = 'none'
+            if (selected != id){
+            cardtoanimate.children[2].style.display = 'none'
+        }
+        }
+    }
+    function selectCard(id){
+        if (selected == id){
+            document.getElementById(`select-${selected}`).style.display = 'none'
+            
+            selected = false
+            
+            
+        }else{
+            if (selected != false){
+                document.getElementById(`select-${selected}`).style.display = 'none'
+            }
+            selected = id
+            document.getElementById(`select-${selected}`).innerHTML = 'Selected'
+        }
+
+        
+
+    }
+    function playerPICK(){
+        if (selected == false){
+            ERRORMSG('You should select a card to pick')
+        }else{
+        picked = true
+        clearOptions()
+        socket.send(JSON.stringify({
+            'command':'pl-pick',
+            'card':selected,
+        }))}
+    }
+    function playerVOTE(){
+        if (selected == false){
+            ERRORMSG('You should select a card to vote')
+        }else{
+        voted = true
+        socket.send(JSON.stringify({
+            'command':'pl-vote',
+            'card':selected,
+            'username':userUsername
+        }))}
+    }
+    function showStatus(mode, username){
+        const statusDiv = document.getElementById('status-'+username)
+        if (mode == 'show'){
+            statusDiv.innerHTML = 'Loading ...'
+            statusDiv.style.display='flex'
+            socket.send(JSON.stringify({
+            'command':'get-status',
+            'username':username
+        }))    
+        }
+        else{
+            statusDiv.style.display = 'none'
+        }
+    }
+    function startView(status){
+        console.log(status)
+        if (status == 'Telling story'){
+        viewStoryTeller_OPTIONS()
+    }else if (status == 'Thinking on cards'){
+        viewPlayers_Waiting()
+        
+    }else if(status == 'Watching Result'){
+        socket.send(JSON.stringify({
+            'command':'get_data',
+            'type':'result'
+        }))
+    }
+    else if (status == 'Waiting for others to vote'){
+        NOTIFMSG('RECONNECT : you have voted for this round wait for others to vote :D')
+    }
+    else if (status =='Watching players votes'){
+        socket.send(JSON.stringify({
+            'command':'get_data',
+            'type':'voteCards'
+        }))
+
+    }
+    else if (status == 'Voting cards'){
+        socket.send(JSON.stringify({
+            'command':'get_data',
+            'type':'voteCards'
+        }))
+
+    }else if (status == 'Waiting for players to pick cards'){
+        socket.send(JSON.stringify({
+            'command':'get_data',
+            'type':'voteCards'
+        }))
+    }
+    else if (status =='Picking cards'){
+        socket.send(JSON.stringify({
+            'command':'get_data',
+            'type':'pickCards'
+        }))
+    }
+    else if (status == 'Picked, Waiting for others to pick'){
+        NOTIFMSG('RECONNECT : you have picked for this round wait for others to pick :D')
+    }
+    }
+    function showWinner(DATA){
+        SI.innerHTML = 
+        `<div class="winner-container">
+        <h2 style="width:fit-content;margin: 20px 40px;">Winner -</h2>
+        <div id="winner-profile" class="winner-profile"><svg fill="none" height="80" role="img" viewBox="0 0 36 36" width="80" xmlns="http://www.w3.org/2000/svg"><mask height="36" id="mask__beam" maskUnits="userSpaceOnUse" width="36" x="0" y="0"><rect fill="#FFFFFF" height="36" rx="72" width="36"></rect></mask><g mask="url(#mask__beam)"><rect fill="#74ff74" height="36" width="36"></rect><rect fill="#00e300" height="36" rx="6" transform="translate(9 9) rotate(299 18 18) scale(1.2)" width="36" x="0" y="0"></rect><g transform="translate(4.5 4.5) rotate(-9 18 18)"><path d="M1321 a10.75 0 00 100" fill="#000000"></path><rect fill="#000000" height="2" rx="1" stroke="none" width="1.5" x="10" y="14"></rect><rect fill="#000000" height="2" rx="1" stroke="none" width="1.5" x="24" y="14"></rect></g></g></svg></div>
+        <div class="winner-detail">
+            <div class="winner-detail-item">
+                Username: ${DATA['U']}
+            </div>
+            <div class="winner-detail-item">
+                Rank role points: ${DATA['RR']}
+            </div>
+            <div class="winner-detail-item">
+                Total points: ${DATA['TP']}
+            </div>
+            <div class="winner-detail-item">
+                Total wins: ${DATA['W']}
+            </div>
+            <div class="winner-detail-item">
+                Most streak: ${DATA['MS']}
+            </div>
+            <button class="winner-detail-btn" onclick="window.location.href='/Stogite/Lobbys/'">Lobbys</button>
+        </div>`
+        SI.style.display = 'flex'
+        SI.addEventListener('click', function(){
+            SI.style.display = 'none'
+        })
+    }
+    
+    const pingPong = setInterval(function PING_PONG(){
+        const startTime = Date.now();
+        if(!socket.CONNECTING){
+            socket.send(JSON.stringify({
+                'command':'ping',
+                'username':userUsername,
+                'ping':startTime
+            }))
+        }
+    }
+    ,1000)
+</script>
+{%endblock content%}

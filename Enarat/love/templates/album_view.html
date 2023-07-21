@@ -1,0 +1,650 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Album - {{album.title}}</title>
+    <link rel="stylesheet"  href="{%static 'css/album_view.css'%}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'icon.png'%}">
+</head>
+
+<body>
+    <div id="images-container-container">
+        <div class="image-container" id="image-container">
+            <div class="jump-to-top">
+                <div class="Jump-Text" onclick="window.scrollTo(0,0);easyScrollDiv.style.display ='none'">
+                    TOP
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" id="ExpandSVG" onclick='expand()'  class="icon icon-tabler icon-tabler-layout-list" width="27" height="27" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                    <path d="M4 14m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                </svg>
+            </div>
+        </div>
+    
+    </div>
+    <div class="starting-box">
+        <div class="back">
+            <h1>{{album.title}}</h1>
+            <button onclick="window.location.href = '/album'">../</button>
+        </div>
+        <div id="users">
+
+
+            
+        </div>
+        {% if perm == 'True'%}
+        <button class="add-user" onclick="showOption('add-user')">ADD USER</button>
+        {%endif%}
+        <button class="add-image" onclick="SIADD.style.display='flex'">
+            ADD IMAGE
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-photo-up" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M15 8h.01"></path>
+            <path d="M12.5 21h-6.5a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v6.5"></path>
+            <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l3.5 3.5"></path>
+            <path d="M14 14l1 -1c.679 -.653 1.473 -.829 2.214 -.526"></path>
+            <path d="M19 22v-6"></path>
+            <path d="M22 19l-3 -3l-3 3"></path>
+         </svg>
+        </button>
+    </div>
+    <div class="PO" onclick="openPO()"></div>
+    <div id="items"></div>
+    <div id="SI-IMG-ADD">
+        <div id="ADD-IMG-CONT">
+            <img id="preview-img" style="margin: 0 auto;margin-top: 80px; display: none; max-height: 300px;width: auto;max-width: 90%;object-fit: cover;">
+            <div id="loading">
+                <div class="heart">
+                    <div class="heart-piece-0"></div>
+                    <div class="heart-piece-1"></div>
+                    <div class="heart-piece-2"></div>
+                    <div class="heart-piece-3"></div>
+                    <div class="heart-piece-4"></div>
+                    <div class="heart-piece-5"></div>
+                    <div class="heart-piece-6"></div>
+                    <div class="heart-piece-7"></div>
+                    <div class="heart-piece-8"></div>
+                </div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" id="preview-svg" width="auto" height="50%" fill="#ff9a9a" style="margin-top:80px;" viewBox="0 0 16 16">
+                <path d="M7 2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zm4.225 4.053a.5.5 0 0 0-.577.093l-3.71 4.71-2.66-2.772a.5.5 0 0 0-.63.062L.002 13v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4.5l-4.777-3.947z"/>
+              </svg>
+              <button id="ADDBTN">
+                <p id="help-text">CHOOSE IMAGE</p> 
+                <div id="uploadDiv"><input type="file" id="upload"></div>
+
+            </button>
+        </div>
+    </div>
+    <div id="SI-OPTIONS">
+        
+    </div>
+</body>
+</html> 
+<script>
+    var images = {};
+    var imagesId = []
+    let startX;
+    let startY;
+    let distX;
+    var openOne = undefined;
+    var perm;
+    let distY;
+    let easyScrollDiv = document.getElementById('images-container-container')
+    var items = '{{images}}'
+    var Expanded = false
+    var phone = false
+    var options = document.getElementById('SI-OPTIONS')
+    let imageContainer = document.getElementById('image-container')
+    let itemContainer = document.getElementById('items')
+    var users = document.getElementById('users')
+    if (/Mobi/.test(navigator.userAgent)) {
+        phone = true
+    }else{
+        document.getElementById('ExpandSVG').style.display ='none'
+    }
+    if('{{perm}}' == 'True'){
+        perm = true
+    }else{
+        perm = false
+    }
+    window.addEventListener('touchstart', function(e){
+        startX =  e.changedTouches[0].pageX
+        startY = e.changedTouches[0].pageY
+        distX = 0
+        distY = 0
+    })
+
+    window.addEventListener('touchmove', function(e){
+        distX = e.changedTouches[0].pageX - startX;
+        distY = e.changedTouches[0].pageY - startY;
+    })
+
+    window.addEventListener('touchend', function(e){
+        if (Math.abs(distX) > Math.abs(distY)){
+            if (distX > 50){
+                easyScrollDiv.style.display = 'block'
+                    if (openOne != undefined){
+                document.getElementById('item-detail-'+openOne).style.display ='none'
+                document.getElementById('open-detail-'+openOne).style.fill = 'none'
+                }
+                document.exitFullscreen()
+            }
+            else if (distX < -50){
+                if (Expanded){
+                    imageContainer.style.width = '100%'
+                    imageContainer.classList.remove('expandIn')
+                    
+                }else{
+                    imageContainer.style.width ='60%'
+                    imageContainer.classList.remove('expandOff')    
+                }
+                easyScrollDiv.style.display = 'none'
+            }
+        }
+    })
+
+
+    const socket = new WebSocket(`ws://${window.location.host}/ws/{{album.title}}/`)
+
+    socket.onmessage = function(e){
+        const DATA = JSON.parse(e.data)
+        let action = DATA.action
+
+        if (action == 'pong-msgs'){
+            const msgs = DATA['msgs']
+            var msgDiv;
+            msgs.forEach(msg =>{
+                appendMSG(msg)
+            })
+            console.log('new msg')
+        }else if(action == 'pong-items'){
+            const ITEMS = DATA['items']
+            ITEMS.forEach(item => {
+                appendIMG(item)
+            })
+        }else if (action == 'appendMSG'){
+            appendMSG(DATA['msg'])
+        }else if(action == 'delete'){
+            DELETEITEM(DATA['item'])
+        }else if(action =='add-post'){  
+            appendIMG(DATA['detail'])
+            setTimeout(function(){
+                SIADD.style.display = 'none'
+                helpText.innerHTML = 'CHOOSE IMAGE'
+                loading.style.display ='none'
+                dummySVG.style.display ='flex'
+                uploadDiv.style.display = 'block'
+            },1000)
+        }else if(action == 'add-user'){
+            if(DATA['response'] == 'True'){
+                ADU(DATA['username'])
+                options.style.display='none'
+            }else{
+                inputERR('user-username', 'NOT FOUND')
+            }
+        }else if (action =='pong-users'){
+            const users = DATA['users']
+            users.forEach((user)=>{
+                ADU(user)
+            })
+        }else if(action == 'delete-user'){
+            DLU(DATA['username'])
+        }
+    }
+    socket.onopen = function(){
+        socket.send(JSON.stringify({
+            'action':'GET_USERS'
+        }))
+        socket.send(JSON.stringify({
+            'action':'GET_ITEMS',
+        })) 
+
+        }
+    function DELETEITEM(pk){
+        document.getElementById('item-container-'+ pk).remove()
+        document.getElementById('item-C-' +pk).remove()
+        openOne = undefined
+    }
+    function showOption(option, data=null){
+        if (option == 'add-user'){
+            const OP = `
+            <div class="option-add-user">
+                <input id="user-username" class="add-user-username" type="text" placeholder="USERNAME" maxlength="16">
+                <button class="add-user-btn" onclick="addUser()"">ADD</button>
+             </div>`
+             options.innerHTML = OP
+             options.style.display = 'flex'
+             optionInOp = options.children[0]
+             options.addEventListener('click', function(event){
+                if(event.target != optionInOp && !optionInOp.contains(event.target)){
+                    options.style.display='none'
+                }
+             })
+            
+        }
+        if (option == 'show-img'){
+            const IM = `
+            <img src="${data.src}" style="position: absolute; max-width: 100%;max-height: 100%;left: 50%;top: 50%;transform: translate(-50%, -50%);">`
+            options.innerHTML = IM
+            options.style.display = 'flex'
+            options.addEventListener('click', function(event){
+                options.style.display='none'
+                
+            })
+
+        }
+    }
+    function inputERR(id, error){
+        const INP = document.getElementById(id)
+        INP.value = ''
+        INP.classList.add('inputERR')
+        INP.setAttribute('placeholder', error)
+        
+    }
+    function deleteUser(username){
+        socket.send(JSON.stringify({
+            'action':'delete-user',
+            'username':username
+        }))
+    }
+    function addUser(){
+        const username = document.getElementById('user-username').value
+        if (username == ''){
+            inputERR('user-username', 'USERNAME')
+        }else{
+            socket.send(JSON.stringify({
+                'action':'add-user',
+                'username':username
+            }))
+        }
+    }
+    function Jump(pk){
+        easyScrollDiv.style.display ='none'
+        const item = document.getElementById('item-container-'+pk)
+        item.scrollIntoView({ behavior: 'smooth'})
+        if(phone){
+            toggleFullScreen(item)
+        }
+
+    }
+    function ADU(username){
+        const userD = document.createElement('div')
+        userD.classList.add('user')
+        userD.setAttribute('id', `user-${username}`)
+        userD.innerHTML += username
+
+        if(perm){
+            const deleteD = document.createElement('div')
+            deleteD.classList.add('delete-user')
+            deleteD.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M18 6l-12 12"></path>
+                            <path d="M6 6l12 12"></path>
+                        </svg>`
+            deleteD.addEventListener('click', function(){
+                deleteUser(username)
+            })
+            userD.appendChild(deleteD)
+        }
+        
+        users.appendChild(userD)
+    }
+    function DLU(username){
+        document.getElementById(`user-${username}`).remove()
+        if ('{{user.username}}' == username){
+            window.location.href = '/album/'
+        }
+    }
+    function openChatFunc(pk){
+        var chatSection = document.getElementById('chat-section-'+pk)
+        var chat = document.getElementById('chat-'+pk)
+        var openChat = document.getElementById('open-'+pk)
+        if (chatSection.classList.contains('open-chat')){
+            openChat.style.transform = 'rotate(0deg)'
+            chatSection.classList.remove('open-chat')
+
+        }
+        else{
+            openChat.style.transform = 'rotate(180deg)'
+            chatSection.classList.add('open-chat')
+        }
+                
+        }
+    function initiateDetail(pk){
+        const itemDetail = document.getElementById('item-detail-'+pk)
+        const openDetailBTN = document.getElementById('open-detail-'+pk)
+        if (openOne != pk && openOne != undefined){
+            document.getElementById('item-detail-'+openOne).style.display ='none'
+            document.getElementById('open-detail-'+openOne).style.fill = 'none'
+        }
+
+        if (itemDetail.style.display == 'flex'){
+                itemDetail.style.display ='none'
+                openDetailBTN.style.fill ='none'
+                openOne = undefined
+            }else{
+                openDetailBTN.style.fill ='#444'
+                openOne = pk
+                itemDetail.style.display='flex'
+            }
+        }
+    function appendIMG(detail){
+        const pk = detail.pk
+        const file = detail.file
+
+
+        const image = document.createElement('div')  
+        image.classList.add('item-')
+        image.id = `item-C-${pk}`
+
+        const imageItem = document.createElement('div')
+        imageItem.classList.add('image-item')
+        
+        const itemsImg = document.createElement('img')
+        itemsImg.setAttribute('src',file)
+        itemsImg.classList.add('items-img')
+        itemsImg.addEventListener('click', function(){
+            Jump(pk)
+        })
+
+        const detailItem = document.createElement('div')
+        detailItem.classList.add('detail-item')
+        detailItem.innerHTML += `<p >${detail.date_created}</p>`
+        
+        const moreDetail = document.createElement('div')
+        moreDetail.classList.add('morejs')
+        moreDetail.setAttribute('id', `open-detail-${pk}`)
+        moreDetail.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M13 7h-6l4 5l-4 5h6l4 -5z"></path>
+                        </svg>`
+        moreDetail.addEventListener('click' ,function(){
+            initiateDetail(pk)
+        })
+        const itemDet = document.createElement('div')
+        itemDet.setAttribute('id', `item-detail-${pk}`)
+        itemDet.classList.add('item-detail')
+        const DELBTN = document.createElement('button')
+        DELBTN.innerHTML='DELETE'
+        DELBTN.addEventListener('click', function(){
+            DEL(pk)
+        })
+
+
+
+        itemDet.innerHTML += `<p>UP: ${detail.creator}</p>`
+        imageItem.appendChild(itemsImg)
+        image.appendChild(detailItem)
+        image.appendChild(itemsImg)
+        detailItem.appendChild(moreDetail)
+        itemDet.appendChild(DELBTN)
+        image.appendChild(itemDet)
+        imageContainer.appendChild (image)
+
+
+        
+
+
+        const item = document.createElement('div')
+        item.classList.add('item-container')
+        item.id = `item-container-${pk}`
+
+        const imaG = document.createElement('div')
+        imaG.classList.add('image')
+        const imag = document.createElement('img')
+        imag.setAttribute('src', `${file}`)
+        if (!phone){
+            imaG.addEventListener('click', function(){
+                showOption('show-img', data= {
+                    src: file
+                })
+            })
+        }else{
+            imaG.addEventListener('click', function(){
+                if (imaG.classList.contains('expand-img')){
+                    imaG.classList.remove('expand-img')
+                    imaG.classList.add('expand-imgout')
+                }else{
+                    imaG.classList.add('expand-img')
+                    imaG.classList.remove('expand-imgout')
+                }
+            })
+        }
+
+        imaG.appendChild(imag)
+        
+        
+
+        const chatSection = document.createElement('div')
+        chatSection.classList.add('chat-section')
+        chatSection.setAttribute('id', `chat-section-${pk}`)
+        
+        chatSection.innerHTML = `
+        <div class="open" id="open-${pk}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-badge-up" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M17 11v6l-5 -4l-5 4v-6l5 -4z"></path>
+            </svg>                   
+        </div>
+        <div class="chat" id="chat-${pk}"></div>
+                `
+        const imageOption = document.createElement('div')
+        imageOption.classList.add('image-option')
+
+        const imageInput = document.createElement('textarea')
+        imageInput.classList.add('send-msg')
+        imageInput.setAttribute('type', 'Submit')
+        imageInput.setAttribute('id', `send-${pk}`)
+        imageInput.setAttribute('placeholder',"راجب این عکسه نظرت چیه؟" )
+        imageInput.addEventListener('keypress', function(event){
+            if(event.keyCode == 13){
+                event.preventDefault()
+                sendMSG(imageInput.value, pk)
+            }
+        })
+
+        imageOption.appendChild(imageInput)
+
+        const sendBTN = document.createElement('div')
+        sendBTN.classList.add('send-btn')
+        sendBTN.setAttribute('id', `send-btn-${pk}`)
+        sendBTN.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M9 6l6 6l-6 6"></path>
+                        </svg>`
+        sendBTN.addEventListener('click', function(){
+            if (imageInput.value != ''){
+                sendMSG(imageInput.value, pk)
+                imageInput.focus()
+            }
+        })
+
+        imageOption.appendChild(sendBTN)
+        chatSection.appendChild(imageOption)
+        item.appendChild(chatSection)
+        item.appendChild(imaG)
+        itemContainer.appendChild(item)
+
+        images[pk] = []
+
+        var openChat = document.getElementById(`open-${pk}`)
+        openChat.addEventListener('click', function(){
+                openChatFunc(pk)
+                
+        })
+        
+        socket.send(JSON.stringify({
+            'action':'GET_MSG',
+            'item':pk
+        }))
+        imagesId.push(pk)
+
+
+    }
+    function appendMSG(msg){
+        if(msg.sender == '{{user.username}}'){
+            msgDiv = `
+                <div class="msg" style="align-items: end;float: right;">
+                    <div class="sender" style="flex-direction: row-reverse;">
+                        <p class="sender-username">${msg.sender}</p>
+                        <p class="send-time">${msg.time}</p>
+                    </div>
+                    <p class="message-content">${msg.content}</p>
+
+                </div>
+                `
+
+                }else{  
+                    msgDiv = `
+                    <div class="msg">
+                        <div class="sender" >
+                            <p class="sender-username">${msg.sender}</p>
+                            <p class="send-time">${msg.time}</p>
+                        </div>
+                        <p class="message-content">${msg.content}</p>
+
+                    </div>`
+                }
+                var chatSection = document.getElementById('chat-'+msg.album)
+                if (!images[msg.album].includes(msg.date)){
+                    images[msg.album].push(msg.date)
+                    chatSection.innerHTML += `<div class="date">${msg.date}</div>`
+                }
+                
+                chatSection.innerHTML += msgDiv
+                chatSection.scrollTop = chatSection.scrollHeight;
+
+    }
+    function DEL(pk){
+        socket.send(JSON.stringify({
+            'action':'delete',
+            'item':pk
+        }))
+    }
+    function POS(pk){
+        socket.send(JSON.stringify({
+            'action':'post',
+            'item':pk,
+        }))
+    }
+    function sendMSG(value, pk){
+        if (value != ''){
+        document.getElementById('send-'+pk).value = ''
+        socket.send(JSON.stringify({
+            'action':'SEND_MSG',
+            'msg':value,
+            'itemPK':pk,
+        })) 
+    }}
+    function expand(){
+        const expandSVG= document.getElementById('ExpandSVG')
+        if (Expanded){
+            imageContainer.classList.remove('remove-options')
+            imageContainer.classList.remove('expandIn')
+            imageContainer.classList.add('expandOff')
+            expandSVG.style.fill =''
+            imageContainer.style.width = '60%'
+            Expanded = false
+        }else{
+            imageContainer.classList.remove('expandOff')
+            imageContainer.classList.add('remove-options')
+            imageContainer.classList.add('expandIn')
+            expandSVG.style.fill ='#C71717'
+            imageContainer.style.width = '100%'
+            Expanded = true
+            if (openOne != undefined){
+                document.getElementById('item-detail-'+openOne).style.display ='none'
+                document.getElementById('open-detail-'+openOne).style.fill = 'none'
+                }
+        }
+
+
+    }
+    var SIADD = document.getElementById('SI-IMG-ADD')
+    const upload = document.getElementById('upload')
+    var uploadDiv = document.getElementById('uploadDiv')
+    var previewIMG = document.getElementById('preview-img')
+    var ADDCARD = document.getElementById('ADD-IMG-CONT')
+    var loading = document.getElementById('loading')
+    var uploadperm = true
+    var dummySVG = document.getElementById('preview-svg')
+    var addBtn = document.getElementById('ADDBTN')
+    var imageLink
+    var helpText = document.getElementById('help-text')
+
+    SIADD.addEventListener('click', function(){
+        if (event.target != ADDCARD &&  !ADDCARD.contains(event.target)){
+            SIADD.style.display = 'none'
+        }
+    })
+    function toggleFullScreen(element) {
+  if (!document.fullscreenElement && !document.mozFullScreenElement &&
+      !document.webkitFullscreenElement && !document.msFullscreenElement ) {
+    // If no element is in fullscreen mode
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+    }
+  } else {
+    // If an element is already in fullscreen mode
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
+    upload.addEventListener('change', function(){
+        const file = upload.files[0]
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        console.log(324342)
+        uploadperm = true
+        reader.onload = function(){
+            previewIMG.style.display = 'block'
+            dummySVG.style.display ='none'
+            previewIMG.setAttribute('src', reader.result)
+            imageLink = reader.result
+            helpText.innerHTML ='ADD'
+
+            uploadDiv.style.display = 'none'
+            addBtn.addEventListener('click', function(){
+                if(uploadperm){
+                    socket.send(JSON.stringify({
+                        'action':'ADDIMG',
+                        'image':imageLink
+                    }))
+                    uploadperm = false
+                    loading.style.display ='flex'
+                    previewIMG.style.display ='none'
+                    helpText.innerHTML = 'Loading ...'
+               }})
+        }
+   } )
+   function openPO(){
+    if (easyScrollDiv.style.display =='block'){
+        easyScrollDiv.style.display ='none'
+    }else{
+        easyScrollDiv.style.display ='block'
+    }
+   }
+</script>

@@ -1,0 +1,47 @@
+{% extends 'main/base.html' %}
+{%block content%}
+<style>
+    p {
+        line-height: 25px;
+        font-size: 1.2rem;
+    }
+
+    h2 {
+        margin: 10px auto;
+        width: fit-content;
+    }
+
+    button {
+        background-color: #89b4c4;
+        border: 1px solid #548999;
+        color: black;
+        border-radius: 5px;
+        padding: .6em;
+        width: 40%;
+        height: 20%;
+        cursor: pointer;
+        transition: all 200ms ease-in-out;
+    }
+
+    button:hover {
+        background-color: #e6eff6;
+    }
+</style>
+<main>
+    <h2>Traveling to the realm of dreams</h2>
+    <p>Welcome to the world of mystery and secrets, the land of Stogite! A land of enchanting designs and sculptures... Here, cards with deep, inspiring, and mesmerizing images test your creative thinking ability and intuition in an attractive and fascinating way. To succeed in this game, you must use your talent, imagination, clairvoyance, and previous experiences in a different way...</p>
+    <img src="https://whitesho.com/Imgs/stogite.jpg" style="margin: 50px auto;display: block;">
+    
+    <h2>neither too obvious nor too obscure</h2>
+    <p>Stogite is a combination of the power of creativity and clairvoyance! In their turn, each player says a word based on one of the cards they have in their hand. Other players must use their clairvoyance to find that player's card among the other cards.
+
+        With the imaginative cards of this game, and by using words, stories, symbols, myths, poetry, and more, influence other players. But be careful! If all players find your card or no player can find it, you will not score any points. You only score if your phrase is neither too obvious nor too obscure!</p>
+        <div style="display: flex;margin:50px auto;width: 100%;overflow: hidden;border-radius: 5px;border: 1px solid #dadada;">
+            <img src="https://whitesho.com/imgs/webp/stoc.webp">
+            <div style="width: 100%;display: flex;flex-direction: column;align-items: center;justify-content: center;gap: 15px;">
+                <button onclick="window.location.href = '/Stogite/Tutorial/'">How to play</button>
+                <button onclick="window.location.href = '/Stogite/Lobbys'">Play now</button>
+            </div>
+        </div>
+</main>
+{%endblock content%}

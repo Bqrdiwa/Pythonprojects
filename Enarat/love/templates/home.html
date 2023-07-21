@@ -1,0 +1,249 @@
+{%load static%}
+
+<style>
+  body {
+    overflow-y: scroll;
+  }
+</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet"  href="{%static 'css/home.css'%}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'icon.png'%}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div class="floating-heart" id="f-h">
+  </div>
+    <div class="box-1">
+    <div class="loading">
+        <div class="heart">
+            <div class="heart-piece-0"></div>
+            <div class="heart-piece-1"></div>
+            <div class="heart-piece-2"></div>
+            <div class="heart-piece-3"></div>
+            <div class="heart-piece-4"></div>
+            <div class="heart-piece-5"></div>
+            <div class="heart-piece-6"></div>
+            <div class="heart-piece-7"></div>
+            <div class="heart-piece-8"></div>
+        </div>
+    </div>
+    <div onclick="goToPage(1,2)" id="heart-btn-1">
+      <div class="heart-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1" stroke="#FF69B4" class="heart-like" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path>
+        </svg>
+      </div>
+    </div>  
+    <div class="love-text" id="love-text">
+    </div> 
+
+    <div id="box-1-1-ending">
+
+    </div>
+    <div id="box-1-2-ending">
+        
+    </div>
+</div>
+<div class="box-2">
+  <div class="box-2-content">
+  <div class="airplane-window">
+    <div class="window">
+        <div class="top"></div>
+        <div class="glass">
+          <div class="sky">
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <airplane class="airplane" id="airplane">
+                <div class="head"></div>
+                <div class="body">
+                  <div class="wind"></div>
+                  <div class="wind"></div>
+                  <div class="wind"></div>
+                </div>
+                <div class="lwing"></div>
+                <div class="rwing"></div>
+                <div class="tale"></div>
+            </airplane>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <div class="box-2-text">
+    <p>سلام ترانه</p> 
+    <p>این بخشو برای ارزو هات درست کردم یادمه ک خیلی دوست داشتی خلبان  شی 😄 دلیلشم خیلی جذاب بود بهت افتخار میکنم</p>
+    <p>امیدوارم تو تموم مراحل زندگیت موفق شی گلم</p>
+    <p>زیاد حرف نمیزنم بریم پایین  تر</p>
+    
+  </div>
+  </div>
+    <div onclick="goToPage(2,3)" id="heart-btn-2">
+      <div class="heart-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1" stroke="#FF69B4" class="heart-like" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path>
+        </svg>
+      </div>
+  </div>
+  <div class="content">
+    <svg version="1.1" id="airplane-loader" xmlns="http://www.w3.org/2000/svg" width="144" height="48" viewBox="0 0 144 48">
+      <path id="airplane-take-off" fill="#FF00FF" d="M59.124,34L56,29h-4l2.947,11H89c1.657,0,3-1.343,3-3s-1.343-3-3-3H78.998L69,18h-4l4.287,16H59.124z"/>
+      <rect id="ground" x="52" y="44" fill="#FF69B4" width="60px" height="4"/>
+    </svg>
+    <svg version="1.1" id="airplane-loader" xmlns="http://www.w3.org/2000/svg" width="144" height="48" viewBox="0 0 144 48">
+      <path id="airplane-landing" fill="#FF00FF" d="M59.124,34L56,29h-4l2.947,11H89c1.657,0,3-1.343,3-3s-1.343-3-3-3H78.998L69,18h-4l4.287,16H59.124z"/>
+    </svg>
+  </div>
+  
+  <div id="box-2-1-ending">
+    
+  </div>
+  <div id="box-2-2-ending">
+
+  </div>
+  
+</div>
+
+<div class="box-3">
+    <div class="box-3-content">
+        <div class="img-container">
+          <img src="{%static 'assets/test.jpg'%}">
+      </div>
+      <div class="img-help-text">
+        <p>اینجا میتونی عکس بزاری بعدش راجب عکسه تو البوم حرف بزنیم😒😜و اره دیگه</p>
+        <p>راستش اینجا کلا برا اینه ک تو زیاد از عکسو اینا خوشت میومدش</p>
+      </div>
+  </div>
+
+  <div class="imgs-options-btn">
+    <a href="/album/"><button>Album</button></a>
+  </div>
+  <div  id="box-3-1-ending"></div>
+  <div id="box-3-2-ending"></div>
+  <div onclick="goToPage(3,4)" id="heart-btn-3">
+    <div class="heart-container">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1" stroke="#FF69B4" class="heart-like" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path>
+      </svg>
+    </div>
+  </div>  
+</div>
+<div class="box-4">
+  <div class="show-profile-demo">
+    <img src="{%static 'assets/profile-demo.png' %}" style="max-height: 70vh; width: 100%;min-height: 400px;
+    object-fit: cover;">
+    </div>
+  <div class="profile-detail">
+    <div>
+      <p>بخش پروفایل این طوریه که وقتی بقیه میان تو سایت میتونن با دیدن پروفایلت یه دید کلی نسبت بهت پیدا کنن 🖼️📷</p>
+      <p> بهش میگن Portfolio</p>
+    </div>
+    <div>
+      <button onclick="window.location.href= '/profile'">Profile</button>
+    </div>
+    </div>
+    <div></div>
+  <div  id="box-4-1-ending"></div>
+  <div id="box-4-2-ending"></div>
+  <div onclick="goToPage(4,5)" id="heart-btn-4">
+    <div class="heart-container">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1" stroke="#FF69B4" class="heart-like" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path>
+      </svg>
+    </div>
+  </div>
+</div>
+<div class="box-5">
+  <div class="another-option">
+    <div class="another-input">
+      <input id="another-div" placeholder="Another Option">
+      <button id="submit">
+        >
+      </button>
+    </div>
+      <div class="another-text">
+         تو این بخش میتونی یه چیزی بنویسی بعدش من همونو به سایت اضافه میکنم هر چی ک دوست داری من چیز دیگه ای ب ذهنم نرسید برا همین اینجا رو گذاشتم که تو بگی مثلا پلی لیست اهنگ بزاریم یا پوست مثل اینسا و اینا
+      </div>
+  </div>
+  <div class="harf-delam">
+    <div class="the-final-text">
+      LOVE YOU FOR EVER
+    </div>
+    <div class="my-text">
+      راسش میخواستم بهت بگم ک توی زندگیه من  تو خیلی ادم مهمی هستی برا همینم این سایتو برات درست کردمو اینا موفق باشی 3>م  
+    </div>
+    <div class="my-heart">
+      <div class="heart">
+        <div class="heart-piece-0"></div>
+        <div class="heart-piece-1"></div>
+        <div class="heart-piece-2"></div>calcheart-btn-5
+        <div class="heart-piece-3"></div>
+        <div class="heart-piece-4"></div>
+        <div class="heart-piece-5"></div>
+        <div class="heart-piece-6"></div>
+        <div class="heart-piece-7"></div>
+        <div class="heart-piece-8"></div>
+    </div>
+    </div>
+
+  </div>
+  <div id="box-5-1-ending">
+
+  </div>
+
+  <div id="box-5-2-ending">
+
+  </div>
+  <div onclick="goToPage(5,1)" id="heart-btn-5">
+    <div class="heart-container">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1" stroke="#FF69B4" class="heart-like" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path>
+      </svg>
+    </div>
+  </div> 
+</div>
+</body>
+</html>
+<script src="{%static 'js/home.js'%}"></script>
+<script>
+  let input = document.getElementById('another-div')
+  $('#submit').click(function() {
+    if (input.value != ''){
+        $.ajax({
+            url: '/',
+            type: 'POST',
+            data: {
+                'another':input.value,
+                'csrfmiddlewaretoken': '{{csrf_token}}'
+            },
+            success: function(response) {
+                input.value = ''
+                if (response.created == 'OK!'){
+                    input.setAttribute('placeholder', 'CREATED')
+                    input.classList.add('pl-green')
+                    input.classList.remove('pl-red')
+                }else{
+                    input.setAttribute('placeholder', 'FAILED')
+                    input.classList.remove('pl-green')
+                    input.classList.add('pl-red')
+                }
+            },
+        });
+    
+    }});
+</script>

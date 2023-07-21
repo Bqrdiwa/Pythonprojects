@@ -1,0 +1,94 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: #FFE5E9;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 420px;
+    width: 400px;
+    box-shadow: 0 0 10px 5px #ecc2c8;
+    max-width: 85%;
+}
+
+.options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-direction: column;
+    width: 100%;
+    gap: 15px;
+}
+
+.image{
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    height: fit-content;
+}
+
+input {
+    width: 70%;
+    border: 1px solid #C71717;
+    border-radius: 5px;
+    padding: .2em;
+    outline: 0;
+    font-size: 1.1rem;
+    font-family: 'Gandom';
+    direction: rtl;
+    font-weight: bold;
+}
+
+.file-input {
+    position: relative;
+    padding: .2em;
+    border: 1px solid #C71717;
+    background-color: #ecc2c8;
+    color: #404040;
+    outline: 0;
+    font-size: 1.1rem;
+    font-family: 'Gandom';
+    direction: rtl;
+    font-weight: bold;
+    border-radius: 5px;
+    width: 70%;
+    cursor: pointer;
+
+}
+
+.file-input:hover {
+    background-color: #c4949b;
+}
+
+.file-input>input {
+    position: absolute;
+    padding: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    opacity: 0;
+    left: 0;
+}
+@font-face {
+    font-family: 'Gandom';
+    src: url('../fonts/Gandom.ttf') format('truetype');
+  }

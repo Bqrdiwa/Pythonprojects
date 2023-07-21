@@ -1,0 +1,73 @@
+.header-title {
+    color: black;
+    font-size: 1rem;
+    font-family: 'Poppins';
+    text-align: center;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    width: 100%;
+    height: fit-content;
+    gap: 40px;
+}
+
+.game-box {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.game-name {
+    font-size: 1.1rem;
+    color: black;
+    font-family: 'Poppins';
+    margin: 0 auto;
+    padding: .5em;
+    cursor: pointer;
+}
+
+.game-detail-container {
+    margin: 5px;
+    display: flex;
+    font-family: 'Poppins';
+    font-size:.85rem;
+}
+
+.game-detail {
+    margin: auto 0;
+}
+
+.game-img {
+    width: 100%;
+    cursor: pointer;
+    transition: scale 400ms ease-in-out;
+}
+
+.game-img:hover {
+    scale: 1.05;
+}
+
+.detail-parent {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    align-self: flex-start;
+    
+}
+
+.favorite-button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 5px;
+    cursor: pointer;
+}

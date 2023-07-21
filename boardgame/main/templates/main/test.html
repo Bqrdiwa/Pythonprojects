@@ -1,0 +1,72 @@
+<style>
+
+    body {
+        overflow: hidden;
+    }
+
+    .bubble-container{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #191919;
+        height: 100%;
+    }
+
+    .bubble {
+        position: absolute;
+        background-color: red;
+        margin-top: 0;
+        
+    }
+</style>
+
+<div class="bubble-container" id="b-c">
+
+</div>
+
+<script>
+    var usedPos = []
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function createBubble(){
+        const bubbleSize = getRandomInt(40,70)
+        const bubbleContainer = document.getElementById('b-c')
+        const windowSize = parseFloat(window.getComputedStyle(bubbleContainer).width)
+        const bubblePos = getRandomInt(bubbleSize,windowSize-bubbleSize)
+        const bubble = document.createElement('div')
+        bubble.classList.add('bubble')
+        bubble.style.width = bubbleSize
+        bubble.style.height = bubbleSize
+        bubble.style.marginLeft = bubblePos
+        bubble.style.borderRadius = bubbleSize / getRandomInt(2,5)+'px'
+        bubble.style.top = -bubbleSize
+        let permii = true
+        const  childrens = bubbleContainer.children
+        for (let i=0;i<childrens.length;i++){
+            childrens[i]
+            
+        }
+        if (permii){
+            console.log(permii)
+        usedPos.push([bubblePos,bubbleSize+bubblePos])
+        bubbleContainer.appendChild(bubble)
+        const bubbleAnimate =  setInterval(function(){
+            let currentHPost =  bubble.style.marginTop
+            currentHPost = parseFloat(getComputedStyle(bubble).marginTop)
+            const windowSizeH = parseFloat(window.getComputedStyle(bubbleContainer).height)
+            const HPos = currentHPost +bubbleSize /300 
+            if (HPos > windowSizeH + bubbleSize){
+                clearInterval(bubbleAnimate)
+                usedPos.splice(usedPos.indexOf([bubblePos,bubbleSize+bubblePos]),1)
+                bubble.remove()
+            }
+            bubble.style.marginTop = HPos
+            
+        },1)
+    }
+    }
+    setInterval(createBubble,1000)
+    
+</script>

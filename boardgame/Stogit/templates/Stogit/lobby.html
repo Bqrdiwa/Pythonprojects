@@ -1,0 +1,910 @@
+{%extends 'main/base.html'%}
+{%load static%}
+{%block content%}
+<link rel="stylesheet" href="{% static 'Stogit/lobby.css'%}">
+<script type="text/javascript" src="{%static 'Stogit/coloraze.js'%}"></script>
+<script>
+    var users = []
+</script>
+<style>
+  body{
+    overflow: hidden;
+  }
+  .header-container{
+        display: none;
+    }
+    .players-show {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    gap: 20px;
+}
+
+.player-card {
+    width: 100%;
+    height: fit-content;
+    border: 1px solid #FF6600;
+    overflow: hidden;
+    background-color: #D4AF37;
+    padding-bottom: 30px;
+    border-radius: 5px;
+    align-self: center;
+    position: relative;
+    transition: all 5s ease-in-out;
+}
+.upper-body {
+    max-width: 100%;
+    height: 100px;
+    background-color: #FF7518;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+ 
+.text-detail {
+    margin-top: 20px;
+    text-align: center;
+    font-family: 'Poppins';
+}
+
+.kick-btn {
+  margin: 0;
+  position: absolute;
+  bottom: 0;
+  width: calc(100% + 2px);
+  background-color: #FF7518;
+  border: 1px solid #FF7518;
+  width: 60px;
+  height: 40px;
+  right: 0;
+  border-top-left-radius: 3px;
+  border: none;
+  border-bottom: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: all 200ms ease;
+  font-family: 'Poppins';
+  font-size: .9rem;
+
+}
+
+.kick-btn:hover {
+  background-color: #ca6c14;
+}
+
+.s-button {
+    width: 50%;
+    margin: auto;
+    display: block;
+    cursor: pointer;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    transition: all 400ms ease;
+}
+
+.s-button:hover {
+    background-color: black;
+    color: white;
+}
+
+.icon {
+    cursor: pointer;
+    color: black;
+}
+
+.optionsBox {
+    display: flex;
+    width: 100%;
+    bottom: 0;
+    z-index: 10;
+    margin:auto;
+    gap: 20px;
+    height: 50px;
+    margin-top: 50px;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    z-index: 999;
+    padding: 25px;
+}
+.border {
+  height: 2px; 
+  width: 90%;
+  left: 50%;
+  transform: translate(-50%,0);
+  background: linear-gradient(to right, transparent, #FF7518, transparent);
+  position: absolute;
+  bottom: 100px;
+  z-index: 999;
+}
+
+.SI {
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    z-index: 10000000;
+    justify-content: center;
+    margin: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 10000000;
+    backdrop-filter: grayscale(0.5) blur(2px);
+    flex-direction: column;
+    display: flex;
+}
+
+
+.color-picker {
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 10px 40px rgba(10, 20, 70, 0.25);
+    background-color: #ffffff;
+}
+
+.sat-lightness-picker {
+    position: relative;
+    height: 300px;
+    width: 300px;
+    user-select: none;
+}
+
+.white-overlay,
+.black-overlay,
+.color-underlay {
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.white-overlay {
+    background: linear-gradient(to right, #fff 0%, rgba(255, 255, 255, 0) 100%);
+    z-index: 1;
+}
+
+.black-overlay {
+    background: linear-gradient(to bottom, transparent 0%, #000 100%);
+    z-index: 2;
+}
+
+.color-underlay {
+    background: cyan;
+    z-index: 0;
+}
+
+.sl-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    margin-top: -6px;
+    background-color: transparent;
+    z-index: 10;
+    border-radius: 50%;
+    transform: translate3d(300px, 0, 0);
+    box-shadow: 0 0 0 3px white, 0 1px 3px 3px rgba(5, 10, 70, 0.33);
+}
+.sl-handle:hover {
+    cursor: pointer;
+}
+.sl-handle:active {
+    transform: scale(1.15);
+}
+
+.hue-picker {
+    height: 15px;
+    width: 100%;
+    margin-top: 15px;
+    background: linear-gradient(to right, red 0%, #ff0 17%, lime 33%, cyan 50%, blue 66%, #f0f 83%, red 100%);
+    box-shadow: inset 0 0 0 3px white, 0 1px 4px rgba(5, 10, 70, 0.1);
+}
+.hue-picker input[type=range] {
+    appearance: none;
+    width: 100%;
+    margin: 0;
+    background: transparent;
+}
+.hue-picker input[type=range]:focus {
+    outline: none;
+}
+.hue-picker input[type=range]::-webkit-slider-runnable-track {
+    background: transparent;
+    border: none;
+}
+.hue-picker input[type=range]::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    margin-bottom: 2px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px white, 0 1px 3px 3px rgba(5, 10, 70, 0.33);
+    }
+
+.color-output {
+    display: flex;
+    margin-top: 15px;
+}
+.color-output input {
+    box-shadow: inset 0 0 0 3px white, 0 1px 4px rgba(5, 10, 70, 0.1);
+    border: none;
+    width: 100px;
+    font-size: 16px;
+    font-family: "Menlo", monospace;
+    padding: 0 15px;
+    outline: none;
+}
+
+.selected-color {
+    width: 100%;
+    height: 40px;
+    box-shadow: inset 0 0 0 3px white, 0 1px 4px rgba(5, 10, 70, 0.1);
+    background-color: cyan;
+}
+
+.color-chng {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.color-chng:hover{
+    opacity: .7;
+}
+ .change-profile-btn {
+    height: fit-content;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #fff;
+ }
+
+ .change-profile-btn:hover {
+    opacity: .8;
+    text-decoration: underline;
+ }
+
+ .wrapper {
+  width: 240px;
+  height: 30px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -120px;
+  margin-top: -15px;
+}
+.wrapper h1 {
+  text-align: center;
+  margin-bottom: 100px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #000;
+}
+.wrapper .square {
+  height: 30px;
+  width: 30px;
+  border-radius: 5px;
+  position: absolute;
+}
+.wrapper .square--1 {
+  animation: slide 4s linear infinite, roll 4s linear infinite;
+  box-shadow: inset 1px 1px 3px -1px #333333, 1px 1px 5px -2px black;
+}
+.wrapper .square--2 {
+  animation: slide 5s linear infinite, roll 5s linear infinite;
+  box-shadow: inset 1px 1px 3px -1px #4d4d4d, 1px 1px 5px -2px black;
+}
+.wrapper .square--3 {
+  animation: slide 6s linear infinite, roll 6s linear infinite;
+  box-shadow: inset 1px 1px 3px -1px #666666, 1px 1px 5px -2px black;
+}
+.wrapper .square--4 {
+  animation: slide 7s linear infinite, roll 7s linear infinite;
+  box-shadow: inset 1px 1px 3px -1px gray, 1px 1px 5px -2px black;
+}
+.wrapper .square--5 {
+  animation: slide 8s linear infinite, roll 8s linear infinite;
+  box-shadow: inset 1px 1px 3px -1px #999999, 1px 1px 5px -2px black;
+}
+.wrapper .square--6 {
+  animation: slide 9s linear infinite, roll 9s linear infinite;
+  box-shadow: inset 1px 1px 3px -1px #b3b3b3, 1px 1px 5px -2px black;
+}
+
+@keyframes pulse {
+  0% {
+    color: rgba(255, 102, 0, 0.1);
+  }
+  50% {
+    color: rgba(121, 48, 0, 0.7);
+  }
+  100% {
+    color: rgba(112, 55, 2, 0.1);
+  }
+}
+@keyframes roll {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(0deg);
+  }
+  35% {
+    transform: rotate(675deg);
+  }
+  40% {
+    transform: rotate(720deg);
+  }
+  60% {
+    transform: rotate(720deg);
+  }
+  95% {
+    transform: rotate(45deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+@keyframes slide {
+  0% {
+    left: 0;
+  }
+  10% {
+    left: 0;
+  }
+  35% {
+    left: 195px;
+  }
+  40% {
+    left: 210px;
+  }
+  60% {
+    left: 210px;
+  }
+  95% {
+    left: 15px;
+  }
+  100% {
+    left: 0;
+  }
+}
+    .upper-body svg {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      position: absolute;
+  }
+
+  .profile-border {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 85px;
+    height: 85px;
+    border-radius: 50%
+    ;z-index: 0;
+  }
+
+  .options-btn {
+    width:fit-content;
+    background-color: #FF7518;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 10px;
+    height: 100%;
+    cursor: pointer;
+    border: 1px solid #000000;
+  }
+
+  .options-btn:hover {
+    background-color: #FF8C00 ;
+  }
+
+  .disconnected {
+    width: 100%;
+    height:50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #191919;
+  }
+</style>
+<div style="width:100%;height: 100%;position: absolute;top: 0;left: 0;">
+  <div style="background-color: #191919;width: 100%;height: 100%;"></div>
+
+</div>
+
+<main>
+    <div style="position: absolute;width: 100%;height: 100%;display: flex;z-index: 1000;left: 0;top: 0;justify-content: center;align-items: center;background-attachment: fixed;
+    background: linear-gradient(#FF7518, #FF8C00);" id="Loading">
+        <div class="wrapper">
+            <h1 id="ltext">Loading</h1>
+            <div class="square square--1"></div>
+            <div class="square square--2"></div>
+            <div class="square square--3"></div>
+            <div class="square square--4"></div>
+            <div class="square square--5"></div>
+            <div class="square square--6"></div>
+          </div>
+    </div>
+
+    <div style="width: 100%;height:60%; display: flex;flex-direction: column;" id="base-container">
+        <div class="players-show" id="container">
+            {%for player in players%}
+                <div class="player-card" id="card-{{player.userRelated.username}}">
+                    <div class="upper-body" id="upper-body">
+                      <div class="profile-border" id="svg-border-{{player.userRelated.username}}">
+                        {{player.profile|safe}}
+                      </div>
+                        
+                    </div>
+                    <p class="text-detail">{{player.userRelated.username}}</p>
+                    {%if player.role == 'ST'%}
+                        <p class="text-detail">Game Master</p>
+                    {%else%}
+                        <p class="text-detail">Player</p>
+                    {%endif%}
+                    {%if  ply.role  == 'ST' and ply != player%}
+                    <button class="kick-btn" onclick="Kick('{{player.userRelated.username}}')">kick</button>
+                    {%endif%}
+                        
+                    {%if player.userRelated == user%}
+                        <div class="color-chng" id="profile-color" onclick="cnhgColor()"></div>
+                        <script>
+                        document.getElementById('profile-color').style.backgroundColor = '{{player.color}}'
+                        console.log('{{player.profile}}')
+                        
+
+                        </script>
+
+                    {%endif%}
+                    <p style="position: absolute;right: 0;top: 0;margin: 5px;color: aqua;" id="ping-{{player.userRelated.username}}"></p>
+                </div>
+                <script>
+                  document.getElementById('svg-border-{{player.userRelated.username}}').style.backgroundColor = '{{player.color}}'
+                  if  ('{{player.connected}}' == 'False'){
+                    document.getElementById("card-{{player.userRelated.username}}").style.filter = 'grayscale(100%)'
+                    document.getElementById('ping-{{player.userRelated.username}}').innerHTML = 
+                    `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="aqua" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                      <path d="M20 16l-4 4"></path>
+                      <path d="M7 12l5 5l-1.5 1.5a3.536 3.536 0 1 1 -5 -5l1.5 -1.5z"></path>
+                      <path d="M17 12l-5 -5l1.5 -1.5a3.536 3.536 0 1 1 5 5l-1.5 1.5z"></path>
+                      <path d="M3 21l2.5 -2.5"></path>
+                      <path d="M18.5 5.5l2.5 -2.5"></path>
+                      <path d="M10 11l-2 2"></path>
+                      <path d="M13 14l-2 2"></path>
+                      <path d="M16 16l4 4"></path>
+                    </svg>`
+                    
+                  }
+                users.push("{{player.userRelated.username}}")</script>
+
+            {%endfor%}
+        </div>
+
+        <p id="error" style="display: none; margin: 20px auto;width: 100%; font-size: 1.2rem;padding: .5em;border: 1px solid #191919;color: red;z-index: 10;text-align: center;background-color: rgba(26, 26, 26, 0.8);"></p>
+
+</div>
+
+<div class="SI" id="SI">
+    <div style="width:100%;height: fit-content;">
+    <div class="color-picker" id="colorPicker">
+        <div class="sat-lightness-picker" id="slPicker" draggable="false">
+          <div class="sl-handle" id="slInput" draggable="false"></div>
+          <div class="white-overlay"></div>
+          <div class="black-overlay"></div>
+          <div id="hueUnderlay" class="color-underlay"></div>
+        </div>
+        <div class="hue-picker">
+          <input id="hueRotation" min="0" max="360" value="180" type="range">
+        </div>
+        <div class="color-output">
+          <div class="selected-color" id="selectedColor"></div>
+          <input type="text" id="hexInput">
+        </div>
+      </div>
+    </div>
+      <p class="change-profile-btn" onclick="chngColorToBackend()">
+        Submit
+      </p>
+</div>
+</main>
+<div class="border"></div>
+<div class="optionsBox" id="options-box">
+
+          
+</div>
+<script>
+    var element = document.getElementById('container')
+    element.style.gridTemplateColumns = 'repeat(4,1fr)';
+
+
+    const hueRotationInput = document.getElementById('hueRotation');
+    const hueUnderlay = document.getElementById('hueUnderlay');
+    const slInput = document.getElementById('slInput');
+    const slPicker = document.getElementById('slPicker');
+    const selectedColor = document.getElementById('selectedColor');
+    const hexInput = document.getElementById('hexInput');
+    const PICKER = document.getElementById('colorPicker')
+    const SI = document.getElementById('SI')
+    const PICKER_HEIGHT = 300;
+    const PICKER_WIDTH = 300;
+    var valueC ;
+    let currentHue = 0.5;
+    let currentSaturation = 1;
+    let currentValue = 0.5;
+    let mouseDown = false;
+
+    const rgbToHex = (r, g, b) => {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    const hsvToRgb = (h, s, v) => {
+        var r, g, b;
+
+    var i = Math.floor(h * 6);
+    var f = h * 6 - i;
+    var p = v * (1 - s);
+    var q = v * (1 - f * s);
+    var t = v * (1 - (1 - f) * s);
+
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+
+    return [ Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255) ];
+    }
+
+    const getCurrentColor = () => {
+    return hsvToRgb(currentHue, currentSaturation, currentValue);
+    }
+
+    const updateColor = (color) => {
+        var valueC = rgbToHex(...getCurrentColor())
+        if (color){
+            selectedColor.setAttribute('style', `background-color: ${color}`);
+            valueC = color
+            hexInput.value = color
+        }else{
+            selectedColor.setAttribute('style', `background-color: rgb(${getCurrentColor()})`);
+            hexInput.value = colorName(valueC);
+        }
+        colorToChng = valueC
+    }
+
+    hueRotationInput.oninput = () => {
+    currentHue = (hueRotationInput.value/360);
+    hueUnderlay.setAttribute('style', `background: rgb(${hsvToRgb(currentHue, 1, 1)})`);
+    updateColor();
+    }
+
+
+    const bindSlInputEvents = () => {
+    const offsetX = slPicker.offsetLeft;
+    const offsetY = slPicker.offsetTop;
+    
+    const setSlPosition = (xPos, yPos, setting) => {
+        let x = xPos - offsetX;
+        let y = yPos - offsetY;
+        
+        if(x <= 0) {
+        x = 0;
+        }
+        if(x >= PICKER_WIDTH) {
+        x = PICKER_WIDTH;
+        }
+        if(y <= 0) {
+        y = 0
+        }
+        if(y >= PICKER_HEIGHT) {
+        y = PICKER_HEIGHT;
+        }
+        
+        currentSaturation = (x/PICKER_WIDTH);
+        currentValue = (1 - (y/PICKER_HEIGHT));
+        slInput.setAttribute('style', `transform: translate3d(${x}px, ${y}px, 1px)`);
+    }
+    
+    const dragSlInput = e => {
+        if(mouseDown) {
+        setSlPosition(e.pageX, e.pageY);
+        updateColor();
+        }
+    }
+    
+    document.onmousemove = dragSlInput;
+    
+    slPicker.onmouseup = () => {
+        mouseDown = false;
+    }
+    document.onmouseup = () => {
+        mouseDown = false;
+    }
+    
+    slPicker.onmousedown = e => {
+        mouseDown = true;
+        setSlPosition(e.pageX, e.pageY);
+        updateColor();
+    }
+    
+    updateColor();
+    }
+
+    window.onresize = bindSlInputEvents;
+
+    bindSlInputEvents();
+
+
+    function cnhgColor(){
+        document.getElementById('SI').style.display = 'flex'
+
+    }
+
+    function chngColorToBackend(){
+      console.log('4234')
+        socket.send(JSON.stringify({
+            'command':'change-profile',
+            'color': rgbToHex(...getCurrentColor())
+        }))
+    }
+
+    SI.addEventListener('click',function(){
+      if (event.target != PICKER && !PICKER.contains(event.target)){
+        SI.style.display = 'none'
+      }
+      
+    })
+    $(document).ready(function() {
+  
+  var counter = 0;
+  var c = 0;
+
+  var i = setInterval(function(){ 
+    if(document.getElementById('ltext').innerHTML == 'Loaded') {
+        clearInterval(i);
+    }
+    else{
+        $(".wrapper h1").html('Loading ' + '.'.repeat(c));
+
+        counter++;
+        c++;
+        if(c==4){
+            c = 0
+        }
+    }
+
+
+  }, 500);
+});
+SI.style.display = 'none'
+</script>
+
+<script>
+  
+  
+  if ('{{ply.role}}' == 'ST'){
+          var permission = true
+        }else{
+          var permission = false
+        }
+    const lobbyN = ('{{game.lobbyName}}')
+
+    const socket = new WebSocket(`ws://${window.location.host}/ws/${lobbyN}/`)
+    socket.onopen = function(e){
+        socket.send(JSON.stringify({
+        'command':'join-player',
+        'username':'{{user.username}}'
+        }));
+        setTimeout(() => {
+            document.getElementById('ltext').innerHTML = 'Loaded'
+        }, 2000)
+        setTimeout(() => {
+            document.getElementById('Loading').style.display = 'none'
+        },2000)
+        
+   }
+    socket.onmessage = function(e) {
+        let DATA = JSON.parse(e.data)
+        const command = DATA.command
+        
+        if (command == 'pong') {
+            const latency = Date.now() - parseInt(DATA['start-time']);
+            const pingpong = document.getElementById('ping-'+DATA['username'])
+            pingpong.innerHTML = `${latency}ms`
+        }
+
+        else if (command == 'player-connect'){
+
+            var playerData = DATA.player_data
+            var Cont = document.getElementById('container')
+            console.log(playerData.username +' connected')
+            const card = document.getElementById('card-'+playerData.username)
+            console.log(card)
+            if (card == null){
+            var role = "Player"
+            var color = ''
+            
+            if (playerData.username == '{{user.username}}'){
+                color += `<div class="color-chng" id="profile-color"></div>`
+                
+                document.getElementById('profile-color').style.backgroundColor = playerData.color
+                const OPTIONS = document.getElementById('options-box')
+                OPTIONS.innerHTML = ''
+            }
+            var Div = document.createElement('div')
+            Div.classList.add('player-card')
+            Div.id = 'card-'+playerData.username
+            Div.innerHTML = '<div class="upper-body" id="upper-body">'+
+            `<div class="profile-border" id="svg-border-${playerData.username}" style="background-color:${playerData.color};"></div>`+
+            `${playerData.profile}</div>`+
+            `<p class="text-detail">${playerData.username}</p>`+
+            `<p class="text-detail">${role}</p>`+color+
+            `<p style="position: absolute;right: 0;top: 0;margin: 5px;color: aqua;" id="ping-${playerData.username}"></p>`
+            if(permission){
+              Div.innerHTML  += `<button class="kick-btn" onclick="Kick('${playerData.username}')">kick</button>`
+            }
+            Cont.appendChild(Div)
+            
+            
+            users.push(playerData.username)}
+            else {
+              let cardY = document.getElementById('card-'+playerData.username)
+              cardY.style.opacity = 1
+              cardY.style.filter = 'grayscale(0%)'
+            }
+            
+        }
+
+        else if(command == 'player-disconnect'){
+          console.log(DATA['username']+' disconnected')
+            const card = document.getElementById('card-'+DATA['username'])
+            card.style.filter = 'grayscale(100%)'
+            document.getElementById('ping-'+DATA['username']).innerHTML = 
+                    `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="aqua" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                      <path d="M20 16l-4 4"></path>
+                      <path d="M7 12l5 5l-1.5 1.5a3.536 3.536 0 1 1 -5 -5l1.5 -1.5z"></path>
+                      <path d="M17 12l-5 -5l1.5 -1.5a3.536 3.536 0 1 1 5 5l-1.5 1.5z"></path>
+                      <path d="M3 21l2.5 -2.5"></path>
+                      <path d="M18.5 5.5l2.5 -2.5"></path>
+                      <path d="M10 11l-2 2"></path>
+                      <path d="M13 14l-2 2"></path>
+                      <path d="M16 16l4 4"></path>
+                    </svg>`
+                  
+            users.splice(users.indexOf(DATA['username']),1)
+        }
+
+        else if (command =='remove-player'){
+          const cardToRemove = document.getElementById('card-'+DATA['username'])
+          cardToRemove.remove()
+          if (DATA['username'] == '{{user.username}}'){
+            window.location.href ='/Stogite/Lobbys/'
+          }
+        }
+
+        else if (command == 'change-profile'){
+          document.getElementById(`svg-border-${DATA.username}`).remove()
+          const upper = document.getElementById(`card-${DATA.username}`)
+          upper.children[0].innerHTML = `<div class="profile-border" id="svg-border-${DATA.username}">${DATA['profile']}</div>`
+          document.getElementById(`svg-border-${DATA.username}`).style.backgroundColor = DATA['color']
+          console.log(DATA['profile'])
+          
+          if (DATA['username'] == '{{user.username}}'){
+            document.getElementById('profile-color').style.backgroundColor = DATA['color']
+          }
+
+        }
+
+        else if (command == 'disband'){
+            const error =document.getElementById('error')
+            error.style.display = 'block'
+            error.innerHTML = 'Party Disbanded'
+            setTimeout(function(){
+              window.location.href ='/Stogite/Lobbys'
+            },5000)
+        }
+
+        else if (command =='start'){
+          socket.close();
+          setTimeout(function(){
+            window.location.href = '/Stogite/Games/{{game.lobbyName}}';
+          },5000)
+          
+        }
+
+    }
+    
+    function Kick(username){
+      socket.send(JSON.stringify({
+        'command':'kick',
+        'username':username
+      }))
+    }
+    function Leave(){
+      socket.send(JSON.stringify({
+        'command':'leave',
+        'username':'{{user.username}}'
+    }))
+    }
+
+    function Disband(){
+      socket.send(JSON.stringify({
+        'command':'disband',
+      }))
+    }
+
+    function Start(){
+      if (users.length < 3){
+        const error = document.getElementById('error')
+        error.innerHTML = 'The number of players must be more than 3 players to be able to start the game'
+        error.style.display = 'block'
+        setTimeout(function(){
+          error.style.display = 'none'
+        },3000)
+
+      }
+      else {
+        $.ajax({
+        url: '/Stogite/Games/'+'{{game.lobbyName}}',
+        type: 'POST',
+        data: {
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+          'command':'initiate'
+        },
+        });
+        socket.send(JSON.stringify({
+          'command':'start'
+        }))
+      }
+    }
+
+    function ifc(){
+    if  (!socket.CONNECTING){
+        const startTime = Date.now();
+        socket.send(JSON.stringify({
+            'command':'ping',
+            'start-time' :startTime,
+            'username':'{{user.username}}'
+        }));
+
+    }}
+  
+
+    setInterval(ifc,1000)
+    if (permission == true){
+      document.getElementById('options-box').innerHTML = 
+        '<button class="options-btn" onclick="Disband()">Disband</button>'+
+        '<button class="options-btn" onclick="Start()">Start</button>'
+    }else{
+      document.getElementById('options-box').innerHTML =
+        '<button class="options-btn"" onclick="Leave()">Leave</button>'
+    }
+</script>
+{%endblock content%}
